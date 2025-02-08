@@ -117,17 +117,6 @@ class _HomepageState extends State<Homepage> {
                       ),
                     ),
                   );
-                  // return ListTile(
-                  //   onTap: () {
-                  //     setState(() {
-                  //       selectedIndex = index;
-                  //     });
-                  //   },
-                  //   leading: Icon(pageICon[index], color: Colors.white),
-                  //   title: Text(pageName[index],
-                  //       style: GoogleFonts.quicksand()
-                  //           .copyWith(color: Colors.white)),
-                  // );
                 },
               ),
             ),
