@@ -18,19 +18,19 @@ class _AgreeState extends State<Agree> {
             padding: EdgeInsets.all(25),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   // SizedBox(
                   //   height: 80,
                   // ),
                   SizedBox(
                     child: Image(
-                      image: AssetImage("assets/rmbglogo1.png"),
-                      height: 100,
+                      image: AssetImage("assets/user1.png"),
+                      height: 400,
                     ),
                   ),
                   // SizedBox(
-                  //   height: 200,
+                  //   height: 10,
                   // ),
                   Text(
                     '''To help us set up your account, could you please take a moment to answer a few questions? 
@@ -43,7 +43,7 @@ Your responses will allow us to personalize your experience.''',
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 150,
+                    height: 250,
                   ),
                   ElevatedButton(
                     onPressed: () {

@@ -9,8 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_neat_and_clean_calendar: ^0.4.16
   google_fonts: ^6.2.1
+  scrollable_clean_calendar: ^1.5.0
   supabase_flutter: ^2.8.3
+  syncfusion_flutter_gauges: ^28.2.4
+  
 
 dev_dependencies:
   flutter_test:

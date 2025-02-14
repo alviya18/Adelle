@@ -46,6 +46,12 @@ class _LastperiodState extends State<Lastperiod> {
                       color: Color(0xFFDC010E),
                       fontSize: 24,
                     )),
+                SizedBox(
+                  height: 25,
+                ),
+                SizedBox(
+                  height: 250,
+                ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(context,

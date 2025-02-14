@@ -101,7 +101,8 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
                                           .copyWith(
                                               color: value == index
                                                   ? Colors.white
-                                                  : Color(0xFFDC010E),
+                                                  : Color.fromARGB(
+                                                      255, 0, 0, 0),
                                               fontSize: 16),
                                       textAlign: TextAlign.center),
                                 ),

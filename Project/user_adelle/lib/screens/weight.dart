@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:user_adelle/screens/height.dart';
 
 class Weight extends StatefulWidget {
@@ -10,14 +11,7 @@ class Weight extends StatefulWidget {
 }
 
 class _WeightState extends State<Weight> {
-  int selectedYear = 2000; // Default year
-
-  void _changeYear(int direction) {
-    setState(() {
-      selectedYear += direction;
-    });
-  }
-
+  double weight = 55.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,44 +49,63 @@ class _WeightState extends State<Weight> {
                       color: Color(0xFFDC010E),
                       fontSize: 24,
                     )),
-                GestureDetector(
-                  // Detect swipe left or right
-                  onHorizontalDragEnd: (details) {
-                    if (details.primaryVelocity! > 0) {
-                      // Swipe right: Increase year
-                      _changeYear(1);
-                    } else if (details.primaryVelocity! < 0) {
-                      // Swipe left: Decrease year
-                      _changeYear(-1);
-                    }
-                  },
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Left Arrow Button
-                        IconButton(
-                          icon: Icon(Icons.arrow_left),
-                          onPressed: () {
-                            _changeYear(-1); // Decrease year
-                          },
+                SizedBox(
+                  height: 55,
+                ),
+                SizedBox(
+                  height: 250,
+                  child: SfRadialGauge(
+                    axes: <RadialAxis>[
+                      RadialAxis(
+                        minimum: 0, // ✅ Min weight set to 0
+                        maximum: 120, // ✅ Max weight set to 120
+                        startAngle: 150,
+                        endAngle: 30,
+                        showLabels: true,
+                        showTicks: true,
+                        axisLineStyle: AxisLineStyle(
+                          thickness: 8,
+                          color: Colors.grey.shade300,
                         ),
-                        // Display the current selected year
-                        Text(
-                          selectedYear.toString(),
-                          style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
-                        ),
-                        // Right Arrow Button
-                        IconButton(
-                          icon: Icon(Icons.arrow_right),
-                          onPressed: () {
-                            _changeYear(1); // Increase year
-                          },
-                        ),
-                      ],
-                    ),
+                        majorTickStyle:
+                            MajorTickStyle(length: 10, thickness: 1.5),
+                        minorTicksPerInterval: 3,
+                        pointers: <GaugePointer>[
+                          MarkerPointer(
+                            // ✅ Draggable Pointer
+                            value: weight,
+                            markerType: MarkerType.invertedTriangle,
+                            color: Color(0xFFDC010E),
+                            markerHeight: 15,
+                            markerWidth: 15,
+                            enableDragging: true, // ✅ Enables dragging
+                            onValueChanged: (value) {
+                              setState(() {
+                                weight = value; // ✅ Update weight dynamically
+                              });
+                            },
+                          ),
+                        ],
+                        annotations: <GaugeAnnotation>[
+                          GaugeAnnotation(
+                            widget: Text(
+                              "${weight.toStringAsFixed(1)} KG", // ✅ Show 1 decimal place
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 3, 3, 3),
+                              ),
+                            ),
+                            angle: 90,
+                            positionFactor: 1.5,
+                          )
+                        ],
+                      )
+                    ],
                   ),
+                ),
+                SizedBox(
+                  height: 155,
                 ),
                 ElevatedButton(
                   onPressed: () {
