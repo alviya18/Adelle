@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:user_adelle/components/form_validation.dart';
+import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/agree.dart';
 
 class Registration extends StatefulWidget {
@@ -13,9 +15,51 @@ class _RegistrationState extends State<Registration> {
   TextEditingController emailID = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController confirmpass = TextEditingController();
-  void signUp() {}
+  Future<void> signUp() async {
+    try {
+      final authentication = await supabase.auth
+          .signUp(password: confirmpass.text, email: emailID.text);
+      String uid = authentication.user!.id;
+      insert(uid);
+    } catch (e) {
+      print("Error Authentication: $e");
+    }
+  }
+
+  Future<void> insert(String uid) async {
+    String email = emailID.text;
+    String password = confirmpass.text;
+    try {
+      await supabase.from('tbl_user').insert(
+          {'user_id': uid, 'user_email': email, 'user_password': password});
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.green,
+          content: Text(
+            'Acount Created!',
+            style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white),
+          )));
+      emailID.clear();
+      pass.clear();
+      confirmpass.clear();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Agree(),
+          ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.black,
+          content: Text(
+            "failed",
+            style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.red),
+          )));
+      print("insertion failed:$e");
+    }
+  }
+
   bool isObscure = true;
   bool hello = true;
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +84,7 @@ class _RegistrationState extends State<Registration> {
             ],
           ),
           Form(
+            key: formKey,
             child: Column(
               children: [
                 Padding(
@@ -63,12 +108,15 @@ class _RegistrationState extends State<Registration> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           TextFormField(
+                            validator: (value) =>
+                                FormValidation.validateEmail(value),
                             style: GoogleFonts.diphylleia().copyWith(
                                 color: const Color.fromARGB(255, 4, 4, 4),
                                 fontSize: 14),
                             controller: emailID,
                             cursorColor: Color.fromARGB(255, 7, 7, 7),
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.black),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color.fromARGB(255, 245, 60, 72),
@@ -95,6 +143,8 @@ class _RegistrationState extends State<Registration> {
                             height: 20,
                           ),
                           TextFormField(
+                            validator: (value) =>
+                                FormValidation.validatePassword(value),
                             style: GoogleFonts.diphylleia().copyWith(
                                 color: const Color.fromARGB(255, 4, 4, 4),
                                 fontSize: 14),
@@ -102,6 +152,7 @@ class _RegistrationState extends State<Registration> {
                             obscureText: isObscure,
                             cursorColor: Color.fromARGB(255, 7, 7, 7),
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.black),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color.fromARGB(255, 245, 60, 72),
@@ -141,6 +192,9 @@ class _RegistrationState extends State<Registration> {
                             height: 20,
                           ),
                           TextFormField(
+                            validator: (value) =>
+                                FormValidation.validateConfirmPassword(
+                                    value, pass.text),
                             style: GoogleFonts.diphylleia().copyWith(
                                 color: const Color.fromARGB(255, 4, 4, 4),
                                 fontSize: 14),
@@ -148,6 +202,7 @@ class _RegistrationState extends State<Registration> {
                             obscureText: hello,
                             cursorColor: Color.fromARGB(255, 7, 7, 7),
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.black),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color.fromARGB(255, 245, 60, 72),
@@ -188,10 +243,10 @@ class _RegistrationState extends State<Registration> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Agree()));
+                              FocusScope.of(context).unfocus();
+                              if (formKey.currentState!.validate()) {
+                                signUp();
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xFFDC010E),

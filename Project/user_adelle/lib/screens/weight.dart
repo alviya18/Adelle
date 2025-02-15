@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/height.dart';
 
 class Weight extends StatefulWidget {
@@ -11,6 +12,24 @@ class Weight extends StatefulWidget {
 }
 
 class _WeightState extends State<Weight> {
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+      print("Userid: $userId");
+      print("Value: $weight");
+      await supabase.from('tbl_user').update({
+        'user_weight': weight,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Height(),
+          ));
+    } catch (e) {
+      print("Error : $e");
+    }
+  }
+
   double weight = 55.0;
   @override
   Widget build(BuildContext context) {
@@ -81,7 +100,8 @@ class _WeightState extends State<Weight> {
                             enableDragging: true, // ✅ Enables dragging
                             onValueChanged: (value) {
                               setState(() {
-                                weight = value; // ✅ Update weight dynamically
+                                weight = double.parse(value.toStringAsFixed(
+                                    1)); // ✅ Update weight dynamically
                               });
                             },
                           ),
@@ -109,8 +129,7 @@ class _WeightState extends State<Weight> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Height()));
+                    update();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFDC010E),

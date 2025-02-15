@@ -36,7 +36,24 @@ class _TrackingreasonState extends State<Trackingreason> {
     }
   }
 
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+      await supabase.from('tbl_user').update({
+        'trackingReason_id': selectedValue,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Birthcontrol(),
+          ));
+    } catch (e) {
+      print("Error tracking reason updating: $e");
+    }
+  }
+
   int? value;
+  String? selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +129,11 @@ class _TrackingreasonState extends State<Trackingreason> {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 onSelected: (bool selected) {
+                                  print(data['trackingReason_id']);
                                   setState(() {
                                     value = selected ? index : null;
+                                    selectedValue =
+                                        data['trackingReason_id'].toString();
                                   });
                                 },
                               );
@@ -126,10 +146,8 @@ class _TrackingreasonState extends State<Trackingreason> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Birthcontrol()));
+                    update();
+                    print("SELECTED: $selectedValue");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFDC010E),

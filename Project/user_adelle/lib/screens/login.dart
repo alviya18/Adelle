@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:user_adelle/components/form_validation.dart';
 import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/home.dart';
 import 'package:user_adelle/screens/registration.dart';
@@ -99,6 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           TextFormField(
+                            validator: (value) =>
+                                FormValidation.validateEmail(value),
                             style: GoogleFonts.diphylleia().copyWith(
                                 color: const Color.fromARGB(255, 4, 4, 4),
                                 fontSize: 14),
@@ -129,6 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           SizedBox(height: 20),
                           TextFormField(
+                            validator: (value) =>
+                                FormValidation.validatePassword(value),
                             style: GoogleFonts.diphylleia().copyWith(
                                 color: const Color.fromARGB(221, 5, 5, 5),
                                 fontSize: 14),

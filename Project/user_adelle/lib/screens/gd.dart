@@ -36,8 +36,28 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
     }
   }
 
-  int? value;
+  int? selectedGd;
 
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+      print("Userid: $userId");
+      print("Value: $selectedGd");
+      await supabase.from('tbl_user').update({
+        'gd_id': selectedGd,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => YearofBirth(),
+          ));
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  int? value;
+  String? selectedValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,6 +135,7 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
                                 onSelected: (bool selected) {
                                   setState(() {
                                     value = selected ? index : null;
+                                    selectedGd = data['gd_id'];
                                   });
                                 },
                               );
@@ -130,10 +151,7 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => YearofBirth()));
+                        update();
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -155,10 +173,7 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => YearofBirth()));
+                        update();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFDC010E),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/last_period.dart';
 
 class Averagecycle extends StatefulWidget {
@@ -31,6 +32,24 @@ class _AveragecycleState extends State<Averagecycle> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  int? selectedAvg;
+
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+      await supabase.from('tbl_user').update({
+        'user_cycleLength': selectedAvg,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Lastperiod(),
+          ));
+    } catch (e) {
+      print("Error : $e");
+    }
   }
 
   @override
@@ -90,6 +109,7 @@ class _AveragecycleState extends State<Averagecycle> {
                             onTap: () {
                               setState(() {
                                 selectedIndex = index;
+                                selectedAvg = numbers[index];
                               });
                               _scrollToIndex(index);
                             },
@@ -168,10 +188,7 @@ class _AveragecycleState extends State<Averagecycle> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Lastperiod()));
+                        update();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFDC010E),

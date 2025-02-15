@@ -62,17 +62,27 @@ class _HomePageState extends State<HomePage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 18.0, vertical: 25),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Image.asset(
-                            'assets/logo1.jpg',
-                            height: 50,
+                          SizedBox(
+                            height: 10,
                           ),
-                          CircleAvatar(
-                            child: Icon(Icons.person_2_outlined),
-                          )
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.asset(
+                                'assets/logo1.jpg',
+                                height: 30,
+                              ),
+                              Icon(
+                                Icons.person_outlined,
+                                color: Color(0xFFDC010E),
+                                size: 30,
+                                weight: 1,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),

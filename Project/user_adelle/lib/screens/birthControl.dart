@@ -14,6 +14,8 @@ class _BirthcontrolState extends State<Birthcontrol> {
   int selectedAnswerIndex = -1;
   List<Map<String, dynamic>> answers = [];
 
+  int? selectedBc;
+
   void initState() {
     super.initState();
     fetchData();
@@ -36,7 +38,25 @@ class _BirthcontrolState extends State<Birthcontrol> {
     }
   }
 
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+
+      await supabase.from('tbl_user').update({
+        'bc_id': selectedBc,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GynacologicalDisease(),
+          ));
+    } catch (e) {
+      print("Error : $e");
+    }
+  }
+
   int? value;
+  String? selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +134,7 @@ class _BirthcontrolState extends State<Birthcontrol> {
                                 onSelected: (bool selected) {
                                   setState(() {
                                     value = selected ? index : null;
+                                    selectedBc = data['bc_id'];
                                   });
                                 },
                               );
@@ -126,10 +147,7 @@ class _BirthcontrolState extends State<Birthcontrol> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GynacologicalDisease()));
+                    update();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFDC010E),

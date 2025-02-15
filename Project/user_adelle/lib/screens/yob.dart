@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/weight.dart';
 
 class YearofBirth extends StatefulWidget {
@@ -24,6 +25,27 @@ class _YearofBirthState extends State<YearofBirth> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  String yearSelected = (DateTime.now().year - 20).toString();
+
+  String? yobSelected;
+
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+
+      await supabase.from('tbl_user').update({
+        'user_yob': yearSelected,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Weight(),
+          ));
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
@@ -87,7 +109,8 @@ class _YearofBirthState extends State<YearofBirth> {
                       physics: FixedExtentScrollPhysics(),
                       onSelectedItemChanged: (index) {
                         setState(() {
-                          selectedYear = years[index];
+                          yearSelected = years[index].toString();
+                          print(years[index].toString());
                         });
                       },
                       childDelegate: ListWheelChildBuilderDelegate(
@@ -151,8 +174,7 @@ class _YearofBirthState extends State<YearofBirth> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Weight()));
+                      update();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFDC010E),

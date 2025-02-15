@@ -109,6 +109,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:user_adelle/main.dart';
 import 'package:user_adelle/screens/AverageCycle.dart';
 
 class Periodduration extends StatefulWidget {
@@ -119,8 +120,26 @@ class Periodduration extends StatefulWidget {
 }
 
 class _PerioddurationState extends State<Periodduration> {
+  Future<void> update() async {
+    try {
+      String userId = supabase.auth.currentUser!.id;
+      print("Weight: $selectedDuration");
+      await supabase.from('tbl_user').update({
+        'user_cycleDuration': selectedDuration,
+      }).eq('user_id', userId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Averagecycle(),
+          ));
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   final ScrollController _scrollController = ScrollController();
   int selectedIndex = 0; // Default selected number
+  int? selectedDuration;
 
   final List<int> numbers =
       List.generate(6, (index) => index + 2); // Odd numbers: [1, 3, 5, ..., 39]
@@ -202,6 +221,7 @@ class _PerioddurationState extends State<Periodduration> {
                             onTap: () {
                               setState(() {
                                 selectedIndex = index;
+                                selectedDuration = numbers[selectedIndex];
                               });
                               _scrollToIndex(index);
                             },
@@ -257,14 +277,7 @@ class _PerioddurationState extends State<Periodduration> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Averagecycle(),
-                          ),
-                        );
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: Colors.white,
@@ -282,12 +295,7 @@ class _PerioddurationState extends State<Periodduration> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Averagecycle(),
-                          ),
-                        );
+                        update();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFDC010E),
