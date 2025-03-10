@@ -33,11 +33,7 @@ class _RegistrationState extends State<Registration> {
     try {
       await supabase.from('tbl_user').insert(
           {'user_id': uid, 'user_email': email, 'user_password': password});
-      CherryToast.success(
-        title: const Text(
-          "Acount Created!",
-        ),
-      ).show(context);
+
       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       //     backgroundColor: Colors.green,
       //     content: Text(
@@ -47,6 +43,11 @@ class _RegistrationState extends State<Registration> {
       emailID.clear();
       pass.clear();
       confirmpass.clear();
+      CherryToast.success(
+        title: const Text(
+          "Acount Created!",
+        ),
+      ).show(context);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -144,6 +145,7 @@ class _RegistrationState extends State<Registration> {
                                 fontSize: 13,
                               ),
                             ),
+                            keyboardType: TextInputType.emailAddress,
                           ),
                           SizedBox(
                             height: 20,

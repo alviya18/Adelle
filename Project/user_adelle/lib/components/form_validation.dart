@@ -76,4 +76,43 @@ class FormValidation {
     }
     return null;
   }
+
+  static String? validateComplaintTitle(String? title) {
+    if (title == null || title.isEmpty) {
+      return "Please enter a title for your complaint.";
+    }
+    if (title.length < 6) {
+      return 'Title must be at least 6 characters';
+    }
+
+    String pattern = r'^[a-zA-Z]+[a-zA-Z\w\s]+$'; // Allow spaces
+    RegExp regExp = RegExp(pattern);
+    if (!regExp.hasMatch(title)) {
+      return 'Title contains invalid characters';
+    }
+
+    return null;
+  }
+
+  static String? validateFeedback(String? issue) {
+    if (issue == null || issue.isEmpty) {
+      return "You cannot submit feedback without any content.";
+    }
+    // Check for minimum 6 characters
+    if (issue.length < 6) {
+      return 'title must be at least 6 characters';
+    }
+    return null;
+  }
+
+  static String? validateComplaintIssue(String? cissue) {
+    if (cissue == null || cissue.isEmpty) {
+      return "You cannot submit a complaint without any content.";
+    }
+    // Check for minimum 6 characters
+    if (cissue.length < 6) {
+      return 'complaint must be at least 6 characters';
+    }
+    return null;
+  }
 }

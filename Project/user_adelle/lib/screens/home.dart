@@ -4,6 +4,7 @@ import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
 import 'package:user_adelle/screens/chatbot.dart';
+import 'package:user_adelle/screens/markperiod.dart';
 import 'package:user_adelle/screens/mood.dart';
 import 'package:user_adelle/screens/profile.dart';
 import 'package:user_adelle/screens/statistics.dart';
@@ -31,16 +32,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 220, 1, 16),
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              // "assets/userlogin4.webp",
-              'assets/test.png',
-              fit: BoxFit.scaleDown,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     // "assets/userlogin4.webp",
+          //     'assets/test.png',
+          //     fit: BoxFit.scaleDown,
+          //   ),
+          // ),
 
           // Semi-transparent Overlay for better contrast
           // Positioned.fill(
@@ -124,16 +125,30 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  MarkPeriod();
+                },
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 35),
                     margin: EdgeInsets.symmetric(vertical: 1, horizontal: 15),
                     decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5), // Shadow color
+                            spreadRadius: 1, // Spread radius
+                            blurRadius: 5, // Blur radius
+                            offset: Offset(
+                                2, 4), // Changes position of shadow (x, y)
+                          ),
+                        ],
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15)),
-                    child: Text("Mark Period"),
+                    child: Text(
+                      "Mark Period",
+                      style: TextStyle(color: Color(0xFFDC010E)),
+                    ),
                   ),
                 ),
               )
