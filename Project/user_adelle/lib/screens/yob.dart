@@ -109,6 +109,8 @@ class _YearofBirthState extends State<YearofBirth> {
                       physics: FixedExtentScrollPhysics(),
                       onSelectedItemChanged: (index) {
                         setState(() {
+                          selectedYear =
+                              years[index]; // ✅ Update selectedYear dynamically
                           yearSelected = years[index].toString();
                           print(years[index].toString());
                         });

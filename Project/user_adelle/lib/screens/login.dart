@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,26 +19,48 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
 
   Future<void> signIn() async {
-    try {
-      String email = emailController.text;
-      String password = passwordController.text;
+    if (formKey.currentState!.validate()) {
+      try {
+        String email = emailController.text;
+        String password = passwordController.text;
 
-      final AuthResponse res = await supabase.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      final User? user = res.user;
-      if (user!.id.isNotEmpty) {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ));
+        final AuthResponse res = await supabase.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+        final User? user = res.user;
+        if (user!.id.isNotEmpty) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ));
+        }
+      } catch (e) {
+        print("Error Sign In: $e");
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text("Login Failed", style: GoogleFonts.sortsMillGoudy()),
+            content: Text("Incorrect email or password. Please try again.",
+                style: GoogleFonts.sortsMillGoudy()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the popup
+                  },
+                  child: Text("OK",
+                      style: GoogleFonts.sortsMillGoudy()
+                          .copyWith(color: Color(0xFFDC010E)))),
+            ],
+          ),
+        );
       }
-    } catch (e) {
-      print("Error Sign In: $e");
     }
   }
+
+  final formKey = GlobalKey<FormState>();
 
   bool isObscure = true;
   @override
@@ -67,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
           SingleChildScrollView(
             // Wrap ListView inside SingleChildScrollView
             child: Form(
+              key: formKey,
               child: Column(
                 children: [
                   SizedBox(

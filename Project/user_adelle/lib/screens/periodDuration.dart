@@ -110,7 +110,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_adelle/main.dart';
-import 'package:user_adelle/screens/AverageCycle.dart';
+import 'package:user_adelle/screens/averageCycle.dart';
 
 class Periodduration extends StatefulWidget {
   const Periodduration({super.key});

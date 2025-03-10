@@ -1,3 +1,4 @@
+import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_adelle/components/form_validation.dart';
@@ -32,12 +33,17 @@ class _RegistrationState extends State<Registration> {
     try {
       await supabase.from('tbl_user').insert(
           {'user_id': uid, 'user_email': email, 'user_password': password});
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.green,
-          content: Text(
-            'Acount Created!',
-            style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white),
-          )));
+      CherryToast.success(
+        title: const Text(
+          "Acount Created!",
+        ),
+      ).show(context);
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     backgroundColor: Colors.green,
+      //     content: Text(
+      //       'Acount Created!',
+      //       style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white),
+      //     )));
       emailID.clear();
       pass.clear();
       confirmpass.clear();

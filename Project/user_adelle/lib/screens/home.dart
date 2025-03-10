@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
+import 'package:user_adelle/screens/chatbot.dart';
+import 'package:user_adelle/screens/mood.dart';
+import 'package:user_adelle/screens/profile.dart';
+import 'package:user_adelle/screens/statistics.dart';
+import 'package:user_adelle/screens/symptom.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,21 +31,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 220, 1, 16),
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.asset(
-              "assets/userlogin4.webp",
-              fit: BoxFit.cover,
+              // "assets/userlogin4.webp",
+              'assets/test.png',
+              fit: BoxFit.scaleDown,
             ),
           ),
 
           // Semi-transparent Overlay for better contrast
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.2),
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Container(
+          //     color: Colors.black.withOpacity(0.2),
+          //   ),
+          // ),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,44 +70,37 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 18.0, vertical: 20),
+                      horizontal: 18.0, vertical: 25),
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      Image.asset('assets/logo1.jpg', height: 40, width: 200),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Image.asset('assets/logo1.jpg',
+                              height: 45, width: 200),
+                          GestureDetector(
+                            child: const Icon(Icons.person_outline_rounded,
+                                size: 35, color: Color(0xFFDC010E)),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Profile()));
+                            },
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
               ),
               SizedBox(height: 5),
-              Container(
-                height: 150,
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white.withOpacity(0.85),
 
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.white,
-                  //     blurRadius: 10,
-                  //     spreadRadius: 2,
-                  //   ),
-                  // ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [],
-                    ),
-                    Image.asset('assets/test.png'),
-                  ],
-                ),
-              ),
               // Calendar Container
               Container(
-                height: 450,
+                height: 610,
                 margin: const EdgeInsets.all(12),
                 padding: EdgeInsetsDirectional.symmetric(vertical: 15),
                 decoration: BoxDecoration(
@@ -128,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                   alignment: Alignment.centerRight,
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 35),
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    margin: EdgeInsets.symmetric(vertical: 1, horizontal: 15),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15)),
@@ -161,11 +162,11 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildNavItem(Icons.home, 0),
-                  buildNavItem(Icons.mood, 1),
-                  buildNavItem(Icons.face_3, 2),
-                  buildNavItem(Icons.wechat_rounded, 3),
-                  buildNavItem(Icons.person_sharp, 4),
+                  buildNavItem(Icons.home, 0, HomePage()),
+                  buildNavItem(Icons.mood, 1, AddMood()),
+                  buildNavItem(Icons.face_3, 2, AddSymptoms()),
+                  buildNavItem(Icons.bar_chart_outlined, 3, CycleStatistics()),
+                  buildNavItem(Icons.wechat_rounded, 4, Chatbot()),
                 ],
               ),
             ),
@@ -176,13 +177,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Custom Navigation Item
-  Widget buildNavItem(IconData icon, int index) {
+  Widget buildNavItem(IconData icon, int index, Widget destinationPage) {
     bool isSelected = selectedIndex == index;
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedIndex = index;
         });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => destinationPage),
+        );
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),

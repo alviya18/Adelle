@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_adelle/main.dart';
-import 'package:user_adelle/screens/last_period.dart';
+import 'package:user_adelle/screens/lastperiod.dart';
 
 class Averagecycle extends StatefulWidget {
   const Averagecycle({super.key});
