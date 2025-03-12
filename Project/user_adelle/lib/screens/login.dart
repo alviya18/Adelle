@@ -31,16 +31,18 @@ class _LoginPageState extends State<LoginPage> {
         final User? user = res.user;
         if (user!.id.isNotEmpty) {
           setState(() {
-            CherryToast.info(
+            CherryToast.success(
               backgroundColor: Colors.white,
               title: const Text("Welcome!"),
-            );
+            ).show(context);
           });
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+            (Route<dynamic> route) => false,
+          );
         }
       } catch (e) {
         print("Error Sign In: $e");

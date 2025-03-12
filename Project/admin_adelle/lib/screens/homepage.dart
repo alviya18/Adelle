@@ -1,6 +1,8 @@
+import 'package:admin_adelle/main.dart';
 import 'package:admin_adelle/screens/complaints.dart';
 import 'package:admin_adelle/screens/dashboard.dart';
 import 'package:admin_adelle/screens/feedback.dart';
+import 'package:admin_adelle/screens/login.dart';
 import 'package:admin_adelle/screens/managebc.dart';
 import 'package:admin_adelle/screens/managechatbot.dart';
 import 'package:admin_adelle/screens/manageemotion.dart';
@@ -55,6 +57,16 @@ class _HomepageState extends State<Homepage> {
     Complaints(),
     Feedbacks()
   ];
+  Future<void> logout() async {
+    await supabase.auth.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(),
+      ),
+      (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +77,18 @@ class _HomepageState extends State<Homepage> {
               color: Color.fromARGB(255, 255, 255, 255),
             )),
         backgroundColor: const Color.fromARGB(255, 3, 3, 3),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout,
+                color: Colors.white), // Change icon as needed
+            onPressed: () {
+              logout();
+
+              // Add your logout function or any action
+              print("Logout button pressed");
+            },
+          ),
+        ],
       ),
       body: Row(
         children: [

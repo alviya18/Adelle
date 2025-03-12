@@ -131,136 +131,172 @@ class _SymptomsState extends State<Symptoms> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.blueGrey,
       body: LayoutBuilder(
         builder: (context, constraints) => Form(
           key: formKey,
-          child: Column(children: [
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Text(
-                "Symptoms Management",
-                style: GoogleFonts.quicksand().copyWith(
-                    fontSize: 36, color: const Color.fromARGB(255, 3, 3, 3)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(children: [
+              SizedBox(
+                height: 20,
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 10,
+              Center(
+                child: Text(
+                  "Symptoms Management",
+                  style: GoogleFonts.quicksand()
+                      .copyWith(fontSize: 36, color: Colors.white),
                 ),
-                Expanded(
-                  child: TextFormField(
-                    style: GoogleFonts.quicksand().copyWith(
-                        color: Color.fromARGB(221, 6, 6, 6),
-                        fontWeight: FontWeight.bold),
-                    controller: symptoms,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please insert symptoms";
-                      }
-                      return null;
-                    },
-                    cursorColor: Color.fromARGB(221, 6, 6, 6),
-                    decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color.fromARGB(221, 6, 6, 6)),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Card(
+                surfaceTintColor: Colors.white,
+                color: Colors.white,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(13.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          style: GoogleFonts.quicksand().copyWith(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold),
+                          controller: symptoms,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please insert symptoms";
+                            }
+                            return null;
+                          },
+                          cursorColor: Color.fromARGB(221, 6, 6, 6),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white)),
+                              hintText: "Symptoms",
+                              hintStyle: GoogleFonts.quicksand().copyWith(
+                                color: Colors.blueGrey,
+                                fontSize: 13,
+                              )),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(221, 6, 6, 6))),
-                        hintText: "Symptoms",
-                        hintStyle: GoogleFonts.quicksand().copyWith(
-                          color: Color.fromARGB(221, 6, 6, 6),
-                          fontSize: 13,
-                        )),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: 100,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (editId == 0) {
+                              insert();
+                            } else {
+                              update();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(221, 240, 63, 63),
+                              overlayColor: Color.fromARGB(255, 40, 41, 42),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5))),
+                          child: Text(
+                            "ENTER",
+                            style: GoogleFonts.quicksand().copyWith(
+                              color: const Color.fromARGB(221, 255, 255, 255),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                SizedBox(
-                  width: 100,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (editId == 0) {
-                        insert();
-                      } else {
-                        update();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(221, 240, 63, 63),
-                        overlayColor: Color.fromARGB(255, 40, 41, 42),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    itemCount: symptomsList.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final data = symptomsList[index];
+                      return Card(
+                        surfaceTintColor: Colors.white,
+                        color: Colors.white,
+                        elevation: 4,
+                        // shadowColor: Color(0xFFDC010E),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                    child: Text(
-                      "ENTER",
-                      style: GoogleFonts.quicksand().copyWith(
-                        color: const Color.fromARGB(221, 255, 255, 255),
-                      ),
-                    ),
+                          borderRadius: BorderRadius.circular(10),
+                          // side: BorderSide(color: Color(0xFFDC010E)),
+                        ),
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(10),
+                          child: ListTile(
+                              title: Text(
+                                data['symptom_choice'],
+                                style: GoogleFonts.quicksand().copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              trailing: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: const Color.fromARGB(
+                                            255, 0, 60, 226),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          editId = data['symptom_id'];
+                                          symptoms.text =
+                                              data['symptom_choice'];
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.delete_outline_outlined,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        delete(data['symptom_id']);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            ListView.builder(
-              itemCount: symptomsList.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = symptomsList[index];
-                return ListTile(
-                    title: Text(
-                      data['symptom_choice'],
-                      style: GoogleFonts.quicksand().copyWith(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    trailing: SizedBox(
-                      width: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: const Color.fromARGB(255, 0, 60, 226),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                editId = data['symptom_id'];
-                                symptoms.text = data['symptom_choice'];
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete_outline_outlined,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              delete(data['symptom_id']);
-                            },
-                          ),
-                        ],
-                      ),
-                    ));
-              },
-            )
-          ]),
+              )
+            ]),
+          ),
         ),
       ),
     );

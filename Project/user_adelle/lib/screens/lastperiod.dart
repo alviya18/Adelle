@@ -24,9 +24,10 @@ class _LastperiodState extends State<Lastperiod> {
         'user_lastPeriod': DateFormat('yyyy-MM-dd').format(_selectedDate),
       }).eq('user_id', userId);
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
+        (Route<dynamic> route) => false,
       );
     } catch (e) {
       print("Error: $e");

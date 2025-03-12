@@ -25,6 +25,7 @@ class _RegisterComplaintState extends State<RegisterComplaint> {
           'complaint_title': title,
           'complaint_content': issue,
           'complaint_date': DateTime.now().toUtc().toIso8601String(),
+          'complaint_status': 0
         });
         CherryToast.success(
           title: const Text(
@@ -64,7 +65,7 @@ class _RegisterComplaintState extends State<RegisterComplaint> {
           title: Text("Register a Complaint",
               style:
                   GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white))),
-      body: Column(
+      body: ListView(
         children: [
           Form(
             key: formKey,
@@ -179,7 +180,7 @@ class _RegisterComplaintState extends State<RegisterComplaint> {
                                           ),
                                         ),
                                         keyboardType: TextInputType.multiline,
-                                        maxLines: null,
+                                        maxLines: 5,
                                         minLines: 1,
                                       ),
                                     ]),

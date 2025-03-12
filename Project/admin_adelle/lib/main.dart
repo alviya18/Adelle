@@ -1,4 +1,5 @@
 import 'package:admin_adelle/screens/homepage.dart';
+import 'package:admin_adelle/screens/login.dart';
 
 import 'package:flutter/material.dart';
 
@@ -23,5 +24,23 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
         debugShowCheckedModeBanner: false, home: Homepage());
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if the user is already logged in
+    final session = supabase.auth.currentSession;
+
+    if (session != null) {
+      // User is logged in, navigate to HomePage
+      return Homepage();
+    } else {
+      // User is not logged in, navigate to LandingPage
+      return LoginPage();
+    }
   }
 }

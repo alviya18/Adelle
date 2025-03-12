@@ -1,3 +1,4 @@
+import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_adelle/main.dart';
@@ -41,13 +42,8 @@ class _AddMoodState extends State<AddMood> {
       await supabase.from("tbl_userEmotions").insert({
         'emotion_id': symptom,
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Added!",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-      ));
+      CherryToast.success(title: const Text("Done!")).show(context);
+
       fetchData();
     } catch (e) {
       print(e);
@@ -95,16 +91,24 @@ class _AddMoodState extends State<AddMood> {
                 ? CircularProgressIndicator(
                     color: Color(0xFFDC010E),
                   )
-                : Wrap(
-                    // Vertical spacing
-                    children: List.generate(
-                      answers.length,
-                      (int index) {
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
+                      itemCount: answers.length,
+                      itemBuilder: (context, index) {
                         final data = answers[index];
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width / 2 -
-                              20, // Two in a row
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 4),
                           child: Card(
+                            shadowColor: value == index
+                                ? Color(0xFFDC010E)
+                                : Colors.white,
+                            //  Color(0xFFDC010E),
                             color: value == index
                                 ? Color(0xFFDC010E)
                                 : Colors.white,
@@ -142,23 +146,26 @@ class _AddMoodState extends State<AddMood> {
                       },
                     ),
                   ),
-            IconButton(
-                style: IconButton.styleFrom(
-                    backgroundColor: Color(0xFFDC010E),
-                    overlayColor: Color.fromARGB(255, 8, 8, 8),
-                    shadowColor: Color(0xFFDC010E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    )),
-                onPressed: () {
-                  insert();
-                  print("SELECTED: $selectedValue");
-                },
-                icon: Icon(
-                  Icons.done,
-                  color: Colors.white,
-                )),
+            SizedBox(
+              height: 20,
+            )
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          insert();
+        },
+        backgroundColor: Color(0xFFDC010E),
+
+        // overlayColor: Color.fromARGB(255, 8, 8, 8),
+        // shadowColor: Color(0xFFDC010E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Icon(
+          Icons.done,
+          color: Colors.white,
         ),
       ),
     );

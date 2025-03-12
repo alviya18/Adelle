@@ -137,7 +137,7 @@ class _ChatBotState extends State<ChatBot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.blueGrey,
       body: LayoutBuilder(
         builder: (context, constraints) => Form(
           key: formKey,
@@ -151,98 +151,113 @@ class _ChatBotState extends State<ChatBot> {
                 style: GoogleFonts.quicksand().copyWith(
                     fontSize: 36,
                     // fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 3, 3, 3)),
+                    color: Colors.white),
               ),
             ),
             SizedBox(
               height: 20,
             ),
-            SizedBox(
-              width: 800,
-              child: TextFormField(
-                style: GoogleFonts.quicksand().copyWith(
-                    color: Color.fromARGB(221, 6, 6, 6),
-                    fontWeight: FontWeight.bold),
-                controller: query,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please insert the question";
-                  }
-                  return null;
-                },
-                cursorColor: Color.fromARGB(221, 6, 6, 6),
-                decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(221, 6, 6, 6)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(221, 6, 6, 6))),
-                    label: Text("Enter the Query"),
-                    labelStyle: GoogleFonts.quicksand().copyWith(
-                        color: Color.fromARGB(221, 6, 6, 6),
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold)),
+            Card(
+              surfaceTintColor: Colors.white,
+              color: Colors.white,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 800,
-              child: TextFormField(
-                style: GoogleFonts.quicksand().copyWith(
-                    color: Color.fromARGB(221, 6, 6, 6),
-                    fontWeight: FontWeight.bold),
-                controller: answer,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please insert the response";
-                  }
-                  return null;
-                },
-                cursorColor: Color.fromARGB(221, 6, 6, 6),
-                decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(221, 6, 6, 6)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(221, 6, 6, 6))),
-                    label: Text("Enter the Response"),
-                    labelStyle: GoogleFonts.quicksand().copyWith(
-                        color: Color.fromARGB(221, 6, 6, 6),
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold)),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              height: 48,
-              width: 800,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (editId == 0) {
-                    insert();
-                  } else {
-                    update();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(221, 240, 63, 63),
-                    //  Color.fromARGB(221, 6, 6, 6),
-                    overlayColor: Color.fromARGB(255, 40, 41, 42),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5))),
-                child: Text(
-                  "ENTER",
-                  style: GoogleFonts.quicksand().copyWith(
-                    color: Colors.white,
-                    // fontWeight: FontWeight.bold,
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 800,
+                        child: TextFormField(
+                          style: GoogleFonts.quicksand().copyWith(
+                              color: Color.fromARGB(221, 6, 6, 6),
+                              fontWeight: FontWeight.bold),
+                          controller: query,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please insert the question";
+                            }
+                            return null;
+                          },
+                          cursorColor: Color.fromARGB(221, 6, 6, 6),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(221, 6, 6, 6)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white)),
+                              label: Text("Enter the Query"),
+                              labelStyle: GoogleFonts.quicksand().copyWith(
+                                  color: Colors.blueGrey,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 800,
+                        child: TextFormField(
+                          style: GoogleFonts.quicksand().copyWith(
+                              color: Color.fromARGB(221, 6, 6, 6),
+                              fontWeight: FontWeight.bold),
+                          controller: answer,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please insert the response";
+                            }
+                            return null;
+                          },
+                          cursorColor: Color.fromARGB(221, 6, 6, 6),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(221, 6, 6, 6)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white)),
+                              label: Text("Enter the Response"),
+                              labelStyle: GoogleFonts.quicksand().copyWith(
+                                  color: Colors.blueGrey,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 48,
+                        width: 800,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (editId == 0) {
+                              insert();
+                            } else {
+                              update();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(221, 240, 63, 63),
+                              //  Color.fromARGB(221, 6, 6, 6),
+                              overlayColor: Color.fromARGB(255, 40, 41, 42),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5))),
+                          child: Text(
+                            "ENTER",
+                            style: GoogleFonts.quicksand().copyWith(
+                              color: Colors.white,
+                              // fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -257,20 +272,20 @@ class _ChatBotState extends State<ChatBot> {
               child: Container(
                 height: 35,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(221, 6, 6, 6),
-                ),
+                    color: const Color.fromARGB(221, 6, 6, 6),
+                    borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      " Slno.",
+                      "    Slno.",
                       style: GoogleFonts.quicksand().copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(width: 250), // Space between headers
+                    SizedBox(width: 200), // Space between headers
                     Text(
                       "Query",
                       style: GoogleFonts.quicksand().copyWith(
@@ -280,7 +295,7 @@ class _ChatBotState extends State<ChatBot> {
                       ),
                     ),
                     SizedBox(
-                      width: 500,
+                      width: 550,
                     ), // Space between headers
                     Text(
                       "Response",
@@ -295,81 +310,102 @@ class _ChatBotState extends State<ChatBot> {
               ),
             ),
 
-            ListView.builder(
-              itemCount: chatBotList.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = chatBotList[index];
-                return ListTile(
-                    title: Flexible(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            (index + 1).toString(),
-                            style: GoogleFonts.quicksand().copyWith(
-                                color: const Color.fromARGB(221, 6, 6, 6),
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            width: 30,
-                          ),
-                          SizedBox(
-                            width: 500,
-                            child: Text(
-                              data['chatBot_query'] ?? 'No Query',
-                              style: GoogleFonts.quicksand().copyWith(
-                                  color: const Color.fromARGB(221, 6, 6, 6),
-                                  fontWeight: FontWeight.bold),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: ListView.builder(
+                    itemCount: chatBotList.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final data = chatBotList[index];
+                      return Card(
+                        surfaceTintColor: Colors.white,
+                        color: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                            title: Flexible(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    (index + 1).toString(),
+                                    style: GoogleFonts.quicksand().copyWith(
+                                        color:
+                                            const Color.fromARGB(221, 6, 6, 6),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                  ),
+                                  SizedBox(
+                                    width: 500,
+                                    child: Text(
+                                      data['chatBot_query'] ?? 'No Query',
+                                      style: GoogleFonts.quicksand().copyWith(
+                                          color: const Color.fromARGB(
+                                              221, 6, 6, 6),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 30,
+                                  ),
+                                  SizedBox(
+                                    width: 500,
+                                    child: Text(
+                                      data['chatBot_response'] ?? 'No Response',
+                                      style: GoogleFonts.quicksand().copyWith(
+                                          color: const Color.fromARGB(
+                                              221, 6, 6, 6),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 30,
-                          ),
-                          SizedBox(
-                            width: 500,
-                            child: Text(
-                              data['chatBot_response'] ?? 'No Response',
-                              style: GoogleFonts.quicksand().copyWith(
-                                  color: const Color.fromARGB(221, 6, 6, 6),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    trailing: SizedBox(
-                      width: 80,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: const Color.fromARGB(255, 0, 60, 226),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                editId = data['chatBot_id'];
-                                query.text = data['chatBot_query'];
-                                answer.text = data['chatBot_response'];
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete_outline_outlined,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              delete(data['chatBot_id']);
-                            },
-                          ),
-                        ],
-                      ),
-                    ));
-              },
+                            trailing: SizedBox(
+                              width: 80,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color:
+                                          const Color.fromARGB(255, 0, 60, 226),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        editId = data['chatBot_id'];
+                                        query.text = data['chatBot_query'];
+                                        answer.text = data['chatBot_response'];
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete_outline_outlined,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      delete(data['chatBot_id']);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )),
+                      );
+                    },
+                  ),
+                ),
+              ),
             )
           ]),
         ),

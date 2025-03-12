@@ -1,3 +1,4 @@
+import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_adelle/main.dart';
@@ -40,15 +41,13 @@ class _AddSymptomsState extends State<AddSymptoms> {
     String? symptom = selectedValue;
     try {
       await supabase.from("tbl_userSymptoms").insert({
-        'symptom_id': symptom,
+        'symptoms_id': symptom,
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Added!",
-          style: TextStyle(color: Colors.white),
+      CherryToast.success(
+        title: const Text(
+          "Done!",
         ),
-        backgroundColor: Colors.green,
-      ));
+      ).show(context);
       fetchData();
     } catch (e) {
       print(e);
@@ -85,10 +84,10 @@ class _AddSymptomsState extends State<AddSymptoms> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             SizedBox(
               height: 10,
             ),
@@ -96,16 +95,24 @@ class _AddSymptomsState extends State<AddSymptoms> {
                 ? CircularProgressIndicator(
                     color: Color(0xFFDC010E),
                   )
-                : Wrap(
-                    // Vertical spacing
-                    children: List.generate(
-                      answers.length,
-                      (int index) {
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
+                      itemCount: answers.length,
+                      itemBuilder: (context, index) {
                         final data = answers[index];
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width / 2 -
-                              20, // Two in a row
+                        print(data);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 4),
                           child: Card(
+                            shadowColor: value == index
+                                ? Color(0xFFDC010E)
+                                : Colors.white,
                             color: value == index
                                 ? Color(0xFFDC010E)
                                 : Colors.white,
@@ -143,44 +150,24 @@ class _AddSymptomsState extends State<AddSymptoms> {
                       },
                     ),
                   ),
-            IconButton(
-                style: IconButton.styleFrom(
-                    backgroundColor: Color(0xFFDC010E),
-                    overlayColor: Color.fromARGB(255, 8, 8, 8),
-                    shadowColor: Color(0xFFDC010E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    )),
-                onPressed: () {
-                  insert();
-                  print("SELECTED: $selectedValue");
-                },
-                icon: Icon(
-                  Icons.done,
-                  color: Colors.white,
-                )),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     insert();
-            //     print("SELECTED: $selectedValue");
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Color(0xFFDC010E),
-            //     overlayColor: Color.fromARGB(255, 8, 8, 8),
-            //     shadowColor: Color(0xFFDC010E),
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(50),
-            //     ),
-            //   ),
-            //   child: Text(
-            //     "NEXT",
-            //     style: TextStyle(
-            //       color: const Color.fromARGB(221, 255, 255, 255),
-            //       fontWeight: FontWeight.bold,
-            //     ),
-            //   ),
-            // ),
-          ],
+            SizedBox(
+              height: 20,
+            ),
+          ])),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          insert();
+        },
+        backgroundColor: Color(0xFFDC010E),
+
+        // overlayColor: Color.fromARGB(255, 8, 8, 8),
+        // shadowColor: Color(0xFFDC010E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Icon(
+          Icons.done,
+          color: Colors.white,
         ),
       ),
     );

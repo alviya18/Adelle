@@ -58,7 +58,7 @@ class _RegisterFeedbackState extends State<RegisterFeedback> {
             icon: Icon(Icons.close_sharp),
             color: Colors.white,
           ),
-          title: Text("Feedback",
+          title: Text("Submit a Feedback",
               style:
                   GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white))),
       body: Column(
@@ -138,7 +138,7 @@ class _RegisterFeedbackState extends State<RegisterFeedback> {
                                           ),
                                         ),
                                         keyboardType: TextInputType.multiline,
-                                        maxLines: null,
+                                        maxLines: 5,
                                         minLines: 1,
                                       ),
                                     ]),

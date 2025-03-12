@@ -19,7 +19,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+  bool selectable = false;
   final calendarController = CleanCalendarController(
+    readOnly: true,
     minDate: DateTime.now(),
     maxDate: DateTime.now().add(const Duration(days: 365)),
     onRangeSelected: (firstDate, secondDate) {},
@@ -35,13 +37,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Positioned.fill(
-          //   child: Image.asset(
-          //     // "assets/userlogin4.webp",
-          //     'assets/test.png',
-          //     fit: BoxFit.scaleDown,
-          //   ),
-          // ),
+          Positioned.fill(
+            child: Image.asset(
+                // "assets/userlogin4.webp",
+                'assets/whitebg.webp',
+                fit: BoxFit.cover),
+          ),
 
           // Semi-transparent Overlay for better contrast
           // Positioned.fill(
@@ -196,9 +197,9 @@ class _HomePageState extends State<HomePage> {
     bool isSelected = selectedIndex == index;
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedIndex = index;
-        });
+        // setState(() {
+        //   selectedIndex = index;
+        // });
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => destinationPage),
