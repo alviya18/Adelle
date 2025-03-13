@@ -71,6 +71,7 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text("Welcome Admin!",
             style: GoogleFonts.quicksand().copyWith(
@@ -147,9 +148,23 @@ class _HomepageState extends State<Homepage> {
           ),
           Expanded(
             flex: 5,
-            child: Container(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: pages[selectedIndex],
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.blueGrey,
+                ),
+                // color: const Color.fromARGB(255, 255, 255, 255),
+                child: pages[selectedIndex],
+              ),
             ),
           ),
         ],

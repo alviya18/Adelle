@@ -135,10 +135,9 @@ class _TrackingReasonState extends State<TrackingReason> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
+    return Container(
       //  const Color.fromARGB(255, 255, 255, 255),
-      body: LayoutBuilder(
+      child: LayoutBuilder(
         builder: (context, constraints) => Form(
           key: formKey,
           child: Padding(
