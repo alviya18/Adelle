@@ -42,6 +42,8 @@ class _AddSymptomsState extends State<AddSymptoms> {
     try {
       await supabase.from("tbl_userSymptoms").insert({
         'symptoms_id': symptom,
+        'userSymptoms_month': DateTime.now().month,
+        'userSymptoms_year': DateTime.now().year,
       });
       CherryToast.success(
         title: const Text(

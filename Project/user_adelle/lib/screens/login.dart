@@ -175,6 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                             obscureText: isObscure,
                             cursorColor: Color.fromARGB(255, 0, 0, 0),
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.black),
                               // filled: true,
                               // fillColor: Color.fromARGB(255, 255, 255, 255),
                               focusedBorder: OutlineInputBorder(

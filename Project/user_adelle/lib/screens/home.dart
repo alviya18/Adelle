@@ -115,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white.withOpacity(0.85),
                 ),
                 child: ScrollableCleanCalendar(
+                  daySelectedBackgroundColor: Color(0xFFDC010E),
                   dayTextStyle: TextStyle(fontSize: 12),
                   weekdayTextStyle: TextStyle(fontSize: 13),
                   monthTextStyle: TextStyle(fontSize: 20),

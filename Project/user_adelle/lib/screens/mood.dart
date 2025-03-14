@@ -41,6 +41,8 @@ class _AddMoodState extends State<AddMood> {
     try {
       await supabase.from("tbl_userEmotions").insert({
         'emotion_id': symptom,
+        'userEmotions_month': DateTime.now().month,
+        'userEmotions_year': DateTime.now().year,
       });
       CherryToast.success(title: const Text("Done!")).show(context);
 
