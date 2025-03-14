@@ -37,31 +37,28 @@ class _FeedbacksState extends State<Feedbacks> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 20,
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Text(
+              "Feedbacks on Adelle",
+              style: GoogleFonts.quicksand().copyWith(
+                  fontSize: 36,
+                  // fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
-            Center(
-              child: Text(
-                "Feedbacks on Adelle",
-                style: GoogleFonts.quicksand().copyWith(
-                    fontSize: 36,
-                    // fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SingleChildScrollView(
               child: ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -92,11 +89,11 @@ class _FeedbacksState extends State<Feedbacks> {
                 },
               ),
             ),
-            SizedBox(
-              height: 20,
-            )
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 20,
+          )
+        ],
       ),
     );
   }

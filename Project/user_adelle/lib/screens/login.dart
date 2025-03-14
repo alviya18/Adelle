@@ -140,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             controller: emailController,
                             cursorColor: Color.fromARGB(255, 7, 7, 7),
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.black),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color.fromARGB(255, 245, 60, 72),

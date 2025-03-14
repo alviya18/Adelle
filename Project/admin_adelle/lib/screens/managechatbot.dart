@@ -136,9 +136,8 @@ class _ChatBotState extends State<ChatBot> {
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      body: LayoutBuilder(
+    return Container(
+      child: LayoutBuilder(
         builder: (context, constraints) => Form(
           key: formKey,
           child: Column(children: [
@@ -268,44 +267,44 @@ class _ChatBotState extends State<ChatBot> {
 
             // Column headers
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                height: 35,
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(221, 6, 6, 6),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      "    Slno.",
-                      style: GoogleFonts.quicksand().copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Card(
+                color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "    Slno.",
+                        style: GoogleFonts.quicksand().copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 200), // Space between headers
-                    Text(
-                      "Query",
-                      style: GoogleFonts.quicksand().copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      SizedBox(width: 200), // Space between headers
+                      Text(
+                        "Query",
+                        style: GoogleFonts.quicksand().copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 550,
-                    ), // Space between headers
-                    Text(
-                      "Response",
-                      style: GoogleFonts.quicksand().copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      SizedBox(
+                        width: 450,
+                      ), // Space between headers
+                      Text(
+                        "Response",
+                        style: GoogleFonts.quicksand().copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -328,79 +327,158 @@ class _ChatBotState extends State<ChatBot> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
-                            title: Flexible(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    (index + 1).toString(),
-                                    style: GoogleFonts.quicksand().copyWith(
-                                        color:
-                                            const Color.fromARGB(221, 6, 6, 6),
-                                        fontWeight: FontWeight.bold),
+                          title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                child: Text(
+                                  (index + 1).toString(),
+                                  style: GoogleFonts.quicksand().copyWith(
+                                    color: const Color.fromARGB(221, 6, 6, 6),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  SizedBox(
-                                    width: 50,
-                                  ),
-                                  SizedBox(
-                                    width: 500,
-                                    child: Text(
-                                      data['chatBot_query'] ?? 'No Query',
-                                      style: GoogleFonts.quicksand().copyWith(
-                                          color: const Color.fromARGB(
-                                              221, 6, 6, 6),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 30,
-                                  ),
-                                  SizedBox(
-                                    width: 500,
-                                    child: Text(
-                                      data['chatBot_response'] ?? 'No Response',
-                                      style: GoogleFonts.quicksand().copyWith(
-                                          color: const Color.fromARGB(
-                                              221, 6, 6, 6),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
+                              SizedBox(width: 10), // Adds space
+
+                              // Query Text with Wrapping
+                              Expanded(
+                                flex: 2, // Adjusts space ratio
+                                child: Text(
+                                  data['chatBot_query'] ?? 'No Query',
+                                  style: GoogleFonts.quicksand().copyWith(
+                                    color: const Color.fromARGB(221, 6, 6, 6),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  softWrap: true,
+                                  overflow:
+                                      TextOverflow.clip, // Prevents overflow
+                                ),
+                              ),
+                              SizedBox(width: 10), // Adds space
+
+                              // Response Text with Wrapping
+                              Expanded(
+                                flex: 3, // Adjusts space ratio
+                                child: Text(
+                                  data['chatBot_response'] ?? 'No Response',
+                                  style: GoogleFonts.quicksand().copyWith(
+                                    color: const Color.fromARGB(221, 6, 6, 6),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  softWrap: true,
+                                  overflow:
+                                      TextOverflow.clip, // Prevents overflow
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: SizedBox(
+                            width: 80,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit,
+                                      color: const Color.fromARGB(
+                                          255, 0, 60, 226)),
+                                  onPressed: () {
+                                    setState(() {
+                                      editId = data['chatBot_id'];
+                                      query.text = data['chatBot_query'];
+                                      answer.text = data['chatBot_response'];
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete_outline_outlined,
+                                      color: Colors.red),
+                                  onPressed: () {
+                                    delete(data['chatBot_id']);
+                                  },
+                                ),
+                              ],
                             ),
-                            trailing: SizedBox(
-                              width: 80,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.edit,
-                                      color:
-                                          const Color.fromARGB(255, 0, 60, 226),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        editId = data['chatBot_id'];
-                                        query.text = data['chatBot_query'];
-                                        answer.text = data['chatBot_response'];
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.delete_outline_outlined,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      delete(data['chatBot_id']);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )),
+                          ),
+                        ),
+
+                        // ListTile(
+                        //     title: Flexible(
+                        //       child: Row(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceEvenly,
+                        //         children: [
+                        //           Text(
+                        //             (index + 1).toString(),
+                        //             style: GoogleFonts.quicksand().copyWith(
+                        //                 color:
+                        //                     const Color.fromARGB(221, 6, 6, 6),
+                        //                 fontWeight: FontWeight.bold),
+                        //           ),
+                        //           SizedBox(
+                        //             width: 50,
+                        //           ),
+                        //           SizedBox(
+                        //             width: 500,
+                        //             child: Text(
+                        //               data['chatBot_query'] ?? 'No Query',
+                        //               style: GoogleFonts.quicksand().copyWith(
+                        //                   color: const Color.fromARGB(
+                        //                       221, 6, 6, 6),
+                        //                   fontWeight: FontWeight.bold),
+                        //             ),
+                        //           ),
+                        //           SizedBox(
+                        //             width: 30,
+                        //           ),
+                        //           SizedBox(
+                        //             width: 500,
+                        //             child: Text(
+                        //               data['chatBot_response'] ?? 'No Response',
+                        //               style: GoogleFonts.quicksand().copyWith(
+                        //                   color: const Color.fromARGB(
+                        //                       221, 6, 6, 6),
+                        //                   fontWeight: FontWeight.bold),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     trailing: SizedBox(
+                        //       width: 80,
+                        //       child: Row(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           IconButton(
+                        //             icon: Icon(
+                        //               Icons.edit,
+                        //               color:
+                        //                   const Color.fromARGB(255, 0, 60, 226),
+                        //             ),
+                        //             onPressed: () {
+                        //               setState(() {
+                        //                 editId = data['chatBot_id'];
+                        //                 query.text = data['chatBot_query'];
+                        //                 answer.text = data['chatBot_response'];
+                        //               });
+                        //             },
+                        //           ),
+                        //           IconButton(
+                        //             icon: Icon(
+                        //               Icons.delete_outline_outlined,
+                        //               color: Colors.red,
+                        //             ),
+                        //             onPressed: () {
+                        //               delete(data['chatBot_id']);
+                        //             },
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     )
+                        //     ),
                       );
                     },
                   ),

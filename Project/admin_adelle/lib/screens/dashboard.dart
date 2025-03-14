@@ -11,8 +11,13 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Dashboard", style: GoogleFonts.quicksand()),
-    );
+    return Container(
+        child: Column(
+      children: [
+        Row(
+          children: [Card()],
+        )
+      ],
+    ));
   }
 }

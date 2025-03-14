@@ -4,7 +4,6 @@ import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
 import 'package:user_adelle/screens/chatbot.dart';
-import 'package:user_adelle/screens/markperiod.dart';
 import 'package:user_adelle/screens/mood.dart';
 import 'package:user_adelle/screens/profile.dart';
 import 'package:user_adelle/screens/statistics.dart';
@@ -19,17 +18,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-  bool selectable = false;
-  final calendarController = CleanCalendarController(
-    readOnly: true,
-    minDate: DateTime.now(),
-    maxDate: DateTime.now().add(const Duration(days: 365)),
-    onRangeSelected: (firstDate, secondDate) {},
-    onDayTapped: (date) {},
-    onPreviousMinDateTapped: (date) {},
-    onAfterMaxDateTapped: (date) {},
-    weekdayStart: DateTime.monday,
-  );
+  bool selectable = false; // Initially, selection is disabled
+  late CleanCalendarController calendarController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCalendarController();
+  }
+
+  void _initializeCalendarController() {
+    calendarController = CleanCalendarController(
+      rangeMode: false,
+      readOnly: !selectable, // If selectable is true, readOnly should be false
+      minDate: DateTime.now(),
+      maxDate: DateTime.now().add(const Duration(days: 365)),
+      onDayTapped: (date) {
+        if (selectable) {
+          print("Selected Date: $date"); // You can store this if needed
+        }
+      },
+
+      weekdayStart: DateTime.monday,
+    );
+  }
+
+  void _toggleSelection() {
+    setState(() {
+      selectable = !selectable; // Toggle selection state
+      _initializeCalendarController(); // Reinitialize the calendar controller
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +57,8 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-                // "assets/userlogin4.webp",
-                'assets/whitebg.webp',
-                fit: BoxFit.cover),
+            child: Image.asset('assets/whitebg.webp', fit: BoxFit.cover),
           ),
-
-          // Semi-transparent Overlay for better contrast
-          // Positioned.fill(
-          //   child: Container(
-          //     color: Colors.black.withOpacity(0.2),
-          //   ),
-          // ),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,10 +67,6 @@ class _HomePageState extends State<HomePage> {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  // borderRadius: const BorderRadius.only(
-                  //   bottomLeft: Radius.circular(40),
-                  //   bottomRight: Radius.circular(40),
-                  // ),
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromARGB(81, 220, 1, 16),
@@ -108,13 +113,6 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.white.withOpacity(0.85),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.white,
-                  //     blurRadius: 10,
-                  //     spreadRadius: 2,
-                  //   ),
-                  // ],
                 ),
                 child: ScrollableCleanCalendar(
                   dayTextStyle: TextStyle(fontSize: 12),
@@ -125,10 +123,10 @@ class _HomePageState extends State<HomePage> {
                   calendarCrossAxisSpacing: 0,
                 ),
               ),
+
+              // Mark Period Button
               GestureDetector(
-                onTap: () {
-                  MarkPeriod();
-                },
+                onTap: _toggleSelection, // Toggle selection mode
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -144,10 +142,12 @@ class _HomePageState extends State<HomePage> {
                                 2, 4), // Changes position of shadow (x, y)
                           ),
                         ],
-                        color: Colors.white,
+                        color: selectable
+                            ? Colors.red
+                            : Colors.white, // Color changes when active
                         borderRadius: BorderRadius.circular(15)),
                     child: Text(
-                      "Mark Period",
+                      selectable ? "Select Date" : "Mark Period",
                       style: TextStyle(color: Color(0xFFDC010E)),
                     ),
                   ),
@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               decoration: BoxDecoration(
-                color: Colors.white, // Semi-transparent
+                color: Colors.white,
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(40)),
                 boxShadow: [
@@ -197,9 +197,9 @@ class _HomePageState extends State<HomePage> {
     bool isSelected = selectedIndex == index;
     return GestureDetector(
       onTap: () {
-        // setState(() {
-        //   selectedIndex = index;
-        // });
+        setState(() {
+          selectedIndex = index;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => destinationPage),

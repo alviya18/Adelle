@@ -148,23 +148,20 @@ class _HomepageState extends State<Homepage> {
           ),
           Expanded(
             flex: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.blueGrey,
-                ),
-                // color: const Color.fromARGB(255, 255, 255, 255),
-                child: pages[selectedIndex],
-              ),
+            child: Container(
+              // decoration: BoxDecoration(
+              //   // boxShadow: [
+              //   //   BoxShadow(
+              //   //     color: Colors.white,
+              //   //     blurRadius: 22,
+              //   //     spreadRadius: 1,
+              //   //   ),
+              //   // ],
+              //   borderRadius: BorderRadius.circular(10),
+              //   color: Colors.blueGrey,
+              // ),
+              color: Colors.blueGrey,
+              child: pages[selectedIndex],
             ),
           ),
         ],

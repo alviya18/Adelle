@@ -131,9 +131,8 @@ class _BirthControlState extends State<BirthControl> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      body: LayoutBuilder(
+    return Container(
+      child: LayoutBuilder(
         builder: (context, constraints) => Form(
           key: formKey,
           child: Padding(
