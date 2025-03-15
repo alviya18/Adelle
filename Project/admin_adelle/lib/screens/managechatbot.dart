@@ -269,7 +269,7 @@ class _ChatBotState extends State<ChatBot> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Card(
-                color: Colors.black,
+                color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -278,7 +278,7 @@ class _ChatBotState extends State<ChatBot> {
                       Text(
                         "    Slno.",
                         style: GoogleFonts.quicksand().copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -287,7 +287,7 @@ class _ChatBotState extends State<ChatBot> {
                       Text(
                         "Query",
                         style: GoogleFonts.quicksand().copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -298,7 +298,7 @@ class _ChatBotState extends State<ChatBot> {
                       Text(
                         "Response",
                         style: GoogleFonts.quicksand().copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),

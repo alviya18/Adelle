@@ -72,18 +72,27 @@ class _FeedbacksState extends State<Feedbacks> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.all(10),
-                      child: ListTile(
-                          title: Text(
-                        data['feedback_content'],
-                        style: GoogleFonts.quicksand().copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data['feedback_content'],
+                              style: GoogleFonts.quicksand().copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              data['feedback_date'],
+                              style: GoogleFonts.quicksand().copyWith(
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                                fontSize: 13,
+                              ),
+                            )
+                          ]),
                     ),
                   );
                 },

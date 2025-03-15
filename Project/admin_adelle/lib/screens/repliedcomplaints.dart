@@ -62,90 +62,113 @@ class _RepliedcomplaintsState extends State<Repliedcomplaints> {
               SizedBox(
                 height: 20,
               ),
-              SingleChildScrollView(
-                child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: answers.length,
-                    itemBuilder: (context, index) {
-                      final data = answers[index];
-                      return Card(
-                          surfaceTintColor: Colors.white,
-                          color: Colors.white,
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['complaint_title'],
-                                  style: GoogleFonts.quicksand().copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.left,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                    child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: answers.length,
+                        itemBuilder: (context, index) {
+                          final data = answers[index];
+                          return Card(
+                              surfaceTintColor: Colors.white,
+                              color: Colors.white,
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 40),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data['complaint_title'],
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      data['complaint_content'],
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    Text(
+                                      data['complaint_date'],
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        color: Colors.black,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "Reply",
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      data['complaint_reply'],
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    Text(
+                                      data['complaint_replyDate'],
+                                      style: GoogleFonts.quicksand().copyWith(
+                                        color: Colors.black,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  data['complaint_content'],
-                                  style: GoogleFonts.quicksand().copyWith(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "Reply",
-                                  style: GoogleFonts.quicksand().copyWith(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Text(
-                                  data['complaint_reply'],
-                                  style: GoogleFonts.quicksand().copyWith(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                              ],
-                            ),
-                          ));
-                    }),
-              ),
-            ]),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    MaterialPageRoute(builder: (context) => Complaints()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black, // Adjust color
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                              ));
+                        }),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    "BACK",
-                    style:
-                        GoogleFonts.quicksand().copyWith(color: Colors.white),
+              ),
+            ]),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(builder: (context) => Complaints()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black, // Adjust color
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      "BACK",
+                      style:
+                          GoogleFonts.quicksand().copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
               ),

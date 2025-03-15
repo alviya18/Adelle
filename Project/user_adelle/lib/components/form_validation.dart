@@ -84,6 +84,9 @@ class FormValidation {
     if (title.length < 6) {
       return 'Title must be at least 6 characters';
     }
+    if (title.length > 30) {
+      return 'Title must be under 30 characters';
+    }
 
     String pattern = r'^[a-zA-Z]+[a-zA-Z\w\s]+$'; // Allow spaces
     RegExp regExp = RegExp(pattern);

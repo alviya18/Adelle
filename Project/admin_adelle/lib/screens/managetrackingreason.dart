@@ -259,6 +259,13 @@ class _TrackingReasonState extends State<TrackingReason> {
                         alignment: Alignment.center,
                         padding: EdgeInsets.all(10),
                         child: ListTile(
+                            leading: Text(
+                              "${index + 1}",
+                              style: GoogleFonts.quicksand().copyWith(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
                             title: Text(
                               data['trackingReason_choice'],
                               style: GoogleFonts.quicksand().copyWith(
