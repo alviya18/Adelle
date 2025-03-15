@@ -263,28 +263,71 @@ class _EmotionState extends State<Emotion> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.edit,
+                                        Tooltip(
+                                          message: "Edit",
+                                          textStyle:
+                                              GoogleFonts.quicksand().copyWith(
                                             color: const Color.fromARGB(
                                                 255, 0, 60, 226),
                                           ),
-                                          onPressed: () {
-                                            setState(() {
-                                              editId = data['emotion_id'];
-                                              emotion.text =
-                                                  data['emotion_choice'];
-                                            });
-                                          },
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 4,
+                                                spreadRadius: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: const Color.fromARGB(
+                                                  255, 0, 60, 226),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                editId = data['emotion_id'];
+                                                emotion.text =
+                                                    data['emotion_choice'];
+                                              });
+                                            },
+                                          ),
                                         ),
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.delete_outline_outlined,
+                                        Tooltip(
+                                          message: "Delete",
+                                          textStyle:
+                                              GoogleFonts.quicksand().copyWith(
                                             color: Colors.red,
                                           ),
-                                          onPressed: () {
-                                            delete(data['emotion_id']);
-                                          },
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 4,
+                                                spreadRadius: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.delete_outline_outlined,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              delete(data['emotion_id']);
+                                            },
+                                          ),
                                         ),
                                       ],
                                     ),

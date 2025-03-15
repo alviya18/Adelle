@@ -1,3 +1,4 @@
+import 'package:admin_adelle/components/form_validation.dart';
 import 'package:admin_adelle/main.dart';
 import 'package:admin_adelle/screens/homepage.dart';
 import 'package:flutter/material.dart';
@@ -78,12 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: GoogleFonts.quicksand().copyWith(
                       color: const Color.fromARGB(221, 255, 255, 255),
                       fontSize: 14),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please Enter your email.";
-                    }
-                    return null;
-                  },
+                  validator: (value) => FormValidation.validateEmail(value),
                   controller: emailController,
                   cursorColor: Color.fromARGB(255, 255, 255, 255),
                   decoration: InputDecoration(
@@ -109,12 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: GoogleFonts.quicksand().copyWith(
                       color: const Color.fromARGB(221, 255, 255, 255),
                       fontSize: 14),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password not entered!";
-                    }
-                    return null;
-                  },
+                  validator: (value) => FormValidation.validatePassword(value),
                   controller: passwordController,
                   obscureText: isObscure,
                   cursorColor: Color.fromARGB(255, 255, 255, 255),

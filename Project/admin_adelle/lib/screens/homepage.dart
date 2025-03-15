@@ -79,15 +79,34 @@ class _HomepageState extends State<Homepage> {
             )),
         backgroundColor: const Color.fromARGB(255, 3, 3, 3),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout,
-                color: Colors.white), // Change icon as needed
-            onPressed: () {
-              logout();
+          Tooltip(
+            message: "Logout",
+            textStyle: GoogleFonts.quicksand().copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.logout,
+                  color: Colors.white), // Change icon as needed
+              onPressed: () {
+                logout();
 
-              // Add your logout function or any action
-              print("Logout button pressed");
-            },
+                // Add your logout function or any action
+                print("Logout button pressed");
+              },
+            ),
           ),
         ],
       ),

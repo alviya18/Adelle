@@ -380,24 +380,63 @@ class _ChatBotState extends State<ChatBot> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  icon: Icon(Icons.edit,
-                                      color: const Color.fromARGB(
-                                          255, 0, 60, 226)),
-                                  onPressed: () {
-                                    setState(() {
-                                      editId = data['chatBot_id'];
-                                      query.text = data['chatBot_query'];
-                                      answer.text = data['chatBot_response'];
-                                    });
-                                  },
+                                Tooltip(
+                                  message: "Edit",
+                                  textStyle: GoogleFonts.quicksand().copyWith(
+                                    color:
+                                        const Color.fromARGB(255, 0, 60, 226),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: IconButton(
+                                    icon: Icon(Icons.edit,
+                                        color: const Color.fromARGB(
+                                            255, 0, 60, 226)),
+                                    onPressed: () {
+                                      setState(() {
+                                        editId = data['chatBot_id'];
+                                        query.text = data['chatBot_query'];
+                                        answer.text = data['chatBot_response'];
+                                      });
+                                    },
+                                  ),
                                 ),
-                                IconButton(
-                                  icon: Icon(Icons.delete_outline_outlined,
-                                      color: Colors.red),
-                                  onPressed: () {
-                                    delete(data['chatBot_id']);
-                                  },
+                                Tooltip(
+                                  message: "Delete",
+                                  textStyle: GoogleFonts.quicksand().copyWith(
+                                    color: Colors.red,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: IconButton(
+                                    icon: Icon(Icons.delete_outline_outlined,
+                                        color: Colors.red),
+                                    onPressed: () {
+                                      delete(data['chatBot_id']);
+                                    },
+                                  ),
                                 ),
                               ],
                             ),

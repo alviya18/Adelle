@@ -80,6 +80,32 @@ class _ComplaintsState extends State<Complaints> {
                           alignment: Alignment.center,
                           padding: EdgeInsets.all(10),
                           child: ListTile(
+                            leading: Tooltip(
+                              message: "Reply to this complaint",
+                              textStyle: GoogleFonts.quicksand().copyWith(
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.message_rounded,
+                                    color: Colors.green,
+                                  )),
+                            ),
                             title: Text(
                               data['complaint_title'],
                               style: GoogleFonts.quicksand().copyWith(
@@ -93,6 +119,33 @@ class _ComplaintsState extends State<Complaints> {
                               style: GoogleFonts.quicksand().copyWith(
                                 color: Colors.black,
                                 // fontSize: 16,
+                              ),
+                            ),
+                            trailing: Tooltip(
+                              message: "date posted",
+                              textStyle: GoogleFonts.quicksand().copyWith(
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                data['complaint_date'],
+                                style: GoogleFonts.quicksand().copyWith(
+                                  color: Colors.black,
+                                  // fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
