@@ -7,11 +7,15 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
+  
   cherry_toast: ^1.12.0
+  
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  pie_chart: ^5.4.0
   supabase_flutter: ^2.8.3
+  
 
 dev_dependencies:
   flutter_test:
