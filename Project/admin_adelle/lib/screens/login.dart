@@ -18,22 +18,42 @@ class _LoginPageState extends State<LoginPage> {
   bool isObscure = true;
   Future<void> signIn() async {
     try {
-      String email = emailController.text;
-      String password = passwordController.text;
+      String email = emailController.text.trim();
+      String password = passwordController.text.trim();
+
       final AuthResponse res = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+
       final User? user = res.user;
-      if (user!.id.isNotEmpty) {
+
+      if (user != null && user.id.isNotEmpty) {
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Homepage(),
-            ));
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ),
+        );
+      } else {
+        // Show error message if user is null
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Invalid email or password. Please try again.",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ));
       }
     } catch (e) {
-      print("Error Sign In: $e");
+      // Show error message when exception occurs
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Failed to sign in. Check your credentials and try again.",
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 
