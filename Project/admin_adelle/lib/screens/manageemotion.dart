@@ -26,7 +26,7 @@ class _EmotionState extends State<Emotion> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Colors.red,
       ));
@@ -35,29 +35,56 @@ class _EmotionState extends State<Emotion> {
 
   Future<void> insert() async {
     if (formKey.currentState!.validate()) {
-      String emotionText = emotion.text;
+      String emotionText = emotion.text.trim().toLowerCase();
+
       try {
-        await supabase.from("tbl_emotions").insert({
-          'emotion_choice': emotionText,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "Added!",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-        ));
-        fetchData();
+        // Check if the emotion already exists (case-insensitive)
+        final existingEmotion = await supabase
+            .from('tbl_emotions')
+            .select()
+            .ilike('emotion_choice', emotionText) // Case-insensitive match
+            .maybeSingle();
+
+        if (existingEmotion != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "This emotion already exists!",
+                style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else {
+          await supabase.from("tbl_emotions").insert({
+            'emotion_choice': emotionText,
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Emotion Added!",
+                style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          fetchData();
+        }
       } catch (e) {
         print(e);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.white),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Failed to insert emotion!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
           ),
-          backgroundColor: Colors.red,
-        ));
+        );
       }
+
       emotion.clear();
     }
   }
@@ -68,7 +95,7 @@ class _EmotionState extends State<Emotion> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Deleted!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red));
 
@@ -77,7 +104,7 @@ class _EmotionState extends State<Emotion> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.red),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.red),
         ),
         backgroundColor: Colors.black,
       ));
@@ -86,38 +113,63 @@ class _EmotionState extends State<Emotion> {
   }
 
   Future<void> update() async {
-    try {
-      await supabase
-          .from('tbl_emotions')
-          .update({'emotion_choice': emotion.text}).eq('emotion_id', editId);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Updated",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color.fromARGB(255, 3, 43, 156),
-      ));
+    String emotionText = emotion.text.trim().toLowerCase();
 
-      fetchData();
-      emotion.clear();
-      setState(() {
-        editId = 0;
-      });
+    try {
+      // Check if another record (excluding the current one) has the same emotion
+      final existingEmotion = await supabase
+          .from('tbl_emotions')
+          .select()
+          .ilike('emotion_choice', emotionText) // Case-insensitive search
+          .neq('emotion_id', editId) // Exclude the current emotion
+          .maybeSingle();
+
+      if (existingEmotion != null) {
+        // If an emotion with the same name already exists, show an error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "This emotion already exists!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        // Proceed with the update
+        await supabase
+            .from('tbl_emotions')
+            .update({'emotion_choice': emotionText}).eq('emotion_id', editId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Updated successfully!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Color.fromARGB(255, 3, 43, 156),
+          ),
+        );
+
+        fetchData();
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.red),
+            "Failed to update!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.black,
         ),
       );
-      emotion.clear();
-      setState(() {
-        editId = 0;
-      });
     }
+
+    // Reset fields after update attempt
+    emotion.clear();
+    setState(() {
+      editId = 0;
+    });
   }
 
   @override
@@ -188,7 +240,8 @@ class _EmotionState extends State<Emotion> {
                               hintStyle: GoogleFonts.quicksand().copyWith(
                                 color: Colors.blueGrey,
                                 fontSize: 13,
-                              )),
+                              ),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(

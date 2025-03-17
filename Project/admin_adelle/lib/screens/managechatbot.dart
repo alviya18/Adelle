@@ -193,7 +193,8 @@ class _ChatBotState extends State<ChatBot> {
                               labelStyle: GoogleFonts.quicksand().copyWith(
                                   color: Colors.blueGrey,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.bold),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(
@@ -224,7 +225,8 @@ class _ChatBotState extends State<ChatBot> {
                               labelStyle: GoogleFonts.quicksand().copyWith(
                                   color: Colors.blueGrey,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.bold),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(

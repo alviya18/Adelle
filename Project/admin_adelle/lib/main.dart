@@ -23,7 +23,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        title: "Adelle", debugShowCheckedModeBanner: false, home: LoginPage());
+        title: "Adelle", debugShowCheckedModeBanner: false, home: Homepage());
   }
 }
 

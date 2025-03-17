@@ -26,7 +26,7 @@ class _SymptomsState extends State<Symptoms> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Colors.red,
       ));
@@ -35,30 +35,52 @@ class _SymptomsState extends State<Symptoms> {
 
   Future<void> insert() async {
     if (formKey.currentState!.validate()) {
-      String disease = symptoms.text;
+      String disease = symptoms.text.trim(); // Trim to avoid unnecessary spaces
+
       try {
+        // Check if the symptom already exists in the database
+        final existingSymptom = await supabase
+            .from("tbl_symptoms")
+            .select()
+            .eq('symptom_choice', disease)
+            .maybeSingle(); // Returns null if no record found
+
+        if (existingSymptom != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Symptom already exists!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.orange,
+          ));
+          return; // Exit without inserting
+        }
+
+        // Insert new symptom if not a duplicate
         await supabase.from("tbl_symptoms").insert({
           'symptom_choice': disease,
         });
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Added!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.green,
         ));
+
         fetchData();
+        symptoms.clear();
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Failed",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ));
       }
-      symptoms.clear();
     }
   }
 
@@ -68,7 +90,7 @@ class _SymptomsState extends State<Symptoms> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Deleted!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red));
 
@@ -77,7 +99,7 @@ class _SymptomsState extends State<Symptoms> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.red),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.red),
         ),
         backgroundColor: Colors.black,
       ));
@@ -86,14 +108,38 @@ class _SymptomsState extends State<Symptoms> {
   }
 
   Future<void> update() async {
+    String newSymptom = symptoms.text.trim(); // Trim to avoid extra spaces
+
     try {
+      // Check if the symptom name already exists (excluding the current entry)
+      final existingSymptom = await supabase
+          .from('tbl_symptoms')
+          .select()
+          .eq('symptom_choice', newSymptom)
+          .neq('symptom_id',
+              editId) // Ensure it's not the same record being updated
+          .maybeSingle(); // Returns null if no duplicate exists
+
+      if (existingSymptom != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Symptom already exists!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.orange,
+        ));
+        return; // Exit without updating
+      }
+
+      // Proceed with update if no duplicate found
       await supabase
           .from('tbl_symptoms')
-          .update({'symptom_choice': symptoms.text}).eq('symptom_id', editId);
+          .update({'symptom_choice': newSymptom}).eq('symptom_id', editId);
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "Updated",
-          style: TextStyle(color: Colors.white),
+          "Updated!",
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Color.fromARGB(255, 3, 43, 156),
       ));
@@ -108,9 +154,9 @@ class _SymptomsState extends State<Symptoms> {
         SnackBar(
           content: Text(
             "Failed",
-            style: TextStyle(color: Colors.red),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.red,
         ),
       );
       symptoms.clear();
@@ -190,7 +236,8 @@ class _SymptomsState extends State<Symptoms> {
                               hintStyle: GoogleFonts.quicksand().copyWith(
                                 color: Colors.blueGrey,
                                 fontSize: 13,
-                              )),
+                              ),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(

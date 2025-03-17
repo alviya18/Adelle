@@ -26,7 +26,7 @@ class _GDState extends State<GD> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Colors.red,
       ));
@@ -35,25 +35,43 @@ class _GDState extends State<GD> {
 
   Future<void> insert() async {
     if (formKey.currentState!.validate()) {
-      String disease = gd.text;
+      String disease = gd.text.trim().toLowerCase();
+
       try {
-        await supabase.from("tbl_gd").insert({
-          'gd_choice': disease,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "Added!",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-        ));
-        fetchData();
+        // Check if disease already exists (case-insensitive)
+        final existingDisease = await supabase
+            .from("tbl_gd")
+            .select()
+            .ilike("gd_choice", disease)
+            .maybeSingle();
+
+        if (existingDisease != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "This disease already exists!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ));
+        } else {
+          await supabase.from("tbl_gd").insert({
+            'gd_choice': disease,
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Added!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.green,
+          ));
+          fetchData();
+        }
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Failed",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ));
@@ -68,7 +86,7 @@ class _GDState extends State<GD> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Deleted!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red));
 
@@ -77,7 +95,7 @@ class _GDState extends State<GD> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.red),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.red),
         ),
         backgroundColor: Colors.black,
       ));
@@ -86,38 +104,57 @@ class _GDState extends State<GD> {
   }
 
   Future<void> update() async {
+    String disease = gd.text.trim().toLowerCase();
+
     try {
-      await supabase
+      // Check if another record (excluding the current one) has the same disease
+      final existingDisease = await supabase
           .from('tbl_gd')
-          .update({'gd_choice': gd.text}).eq('gd_id', editId);
+          .select()
+          .ilike('gd_choice', disease)
+          .neq('gd_id', editId) // Exclude the current disease
+          .maybeSingle();
+
+      if (existingDisease != null) {
+        // If disease already exists, show error
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "This disease already exists!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ));
+      } else {
+        // Proceed with the update
+        await supabase
+            .from('tbl_gd')
+            .update({'gd_choice': disease}).eq('gd_id', editId);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Updated successfully!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        ));
+
+        fetchData();
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "Updated",
-          style: TextStyle(color: Colors.white),
+          "Failed to update!",
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        backgroundColor: Colors.black,
       ));
-
-      fetchData();
-      gd.clear();
-      setState(() {
-        editId = 0;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.red),
-          ),
-          backgroundColor: Colors.black,
-        ),
-      );
-      gd.clear();
-      setState(() {
-        editId = 0;
-      });
     }
+
+    // Reset fields after update attempt
+    gd.clear();
+    setState(() {
+      editId = 0;
+    });
   }
 
   @override
@@ -191,7 +228,8 @@ class _GDState extends State<GD> {
                               hintStyle: GoogleFonts.quicksand().copyWith(
                                 color: Colors.blueGrey,
                                 fontSize: 13,
-                              )),
+                              ),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(

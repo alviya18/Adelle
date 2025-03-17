@@ -26,7 +26,7 @@ class _TrackingReasonState extends State<TrackingReason> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Colors.red,
       ));
@@ -35,25 +35,44 @@ class _TrackingReasonState extends State<TrackingReason> {
 
   Future<void> insert() async {
     if (formKey.currentState!.validate()) {
-      String tr = trackingReason.text;
+      String tr = trackingReason.text.trim().toLowerCase();
+
       try {
-        await supabase.from("tbl_trackingReason").insert({
-          'trackingReason_choice': tr,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "Added!",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-        ));
-        fetchData();
+        // Check if tracking reason already exists (case-insensitive)
+        final existingReason = await supabase
+            .from("tbl_trackingReason")
+            .select()
+            .ilike("trackingReason_choice", tr)
+            .maybeSingle();
+
+        if (existingReason != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "This tracking reason already exists!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ));
+        } else {
+          await supabase.from("tbl_trackingReason").insert({
+            'trackingReason_choice': tr,
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Added!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.green,
+          ));
+          fetchData();
+        }
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Failed",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ));
@@ -71,7 +90,7 @@ class _TrackingReasonState extends State<TrackingReason> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Deleted!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red));
 
@@ -80,7 +99,7 @@ class _TrackingReasonState extends State<TrackingReason> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.red),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.red),
         ),
         backgroundColor: Colors.black,
       ));
@@ -89,39 +108,56 @@ class _TrackingReasonState extends State<TrackingReason> {
   }
 
   Future<void> update() async {
+    String reason = trackingReason.text.trim().toLowerCase();
+
     try {
-      await supabase
+      // Check if another record (excluding the current one) has the same tracking reason
+      final existingReason = await supabase
           .from('tbl_trackingReason')
-          .update({'trackingReason_choice': trackingReason.text}).eq(
-              'trackingReason_id', editId);
+          .select()
+          .ilike('trackingReason_choice', reason)
+          .neq('trackingReason_id', editId) // Exclude the current entry
+          .maybeSingle();
+
+      if (existingReason != null) {
+        // If tracking reason already exists, show error
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "This tracking reason already exists!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ));
+      } else {
+        // Proceed with the update
+        await supabase.from('tbl_trackingReason').update(
+            {'trackingReason_choice': reason}).eq('trackingReason_id', editId);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Updated successfully!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        ));
+
+        fetchData();
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "Updated",
-          style: TextStyle(color: Colors.white),
+          "Failed to update!",
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        backgroundColor: Colors.black,
       ));
-
-      fetchData();
-      trackingReason.clear();
-      setState(() {
-        editId = 0;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.red),
-          ),
-          backgroundColor: Colors.black,
-        ),
-      );
-      trackingReason.clear();
-      setState(() {
-        editId = 0;
-      });
     }
+
+    // Reset fields after update attempt
+    trackingReason.clear();
+    setState(() {
+      editId = 0;
+    });
   }
 
   @override
@@ -200,7 +236,8 @@ class _TrackingReasonState extends State<TrackingReason> {
                               hintStyle: GoogleFonts.quicksand().copyWith(
                                 color: Color.fromARGB(221, 6, 6, 6),
                                 fontSize: 13,
-                              )),
+                              ),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(

@@ -26,7 +26,7 @@ class _BirthControlState extends State<BirthControl> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Failed",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
         backgroundColor: Colors.red,
       ));
@@ -35,25 +35,45 @@ class _BirthControlState extends State<BirthControl> {
 
   Future<void> insert() async {
     if (formKey.currentState!.validate()) {
-      String tr = bc.text;
+      String choice = bc.text.trim().toLowerCase();
+
       try {
-        await supabase.from("tbl_bc").insert({
-          'bc_choice': tr,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "Added!",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-        ));
-        fetchData();
+        // Check if the choice already exists (case-insensitive)
+        final existingChoice = await supabase
+            .from("tbl_bc")
+            .select()
+            .ilike("bc_choice", choice)
+            .maybeSingle();
+
+        if (existingChoice != null) {
+          // If duplicate exists, show error message
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "This birth control choice already exists!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ));
+        } else {
+          // Insert new choice if no duplicate found
+          await supabase.from("tbl_bc").insert({
+            'bc_choice': choice,
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Added successfully!",
+              style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+            ),
+            backgroundColor: Colors.green,
+          ));
+          fetchData();
+        }
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.white),
+            "Failed to add!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ));
@@ -68,7 +88,7 @@ class _BirthControlState extends State<BirthControl> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Deleted!",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
           ),
           backgroundColor: Colors.red));
 
@@ -86,38 +106,57 @@ class _BirthControlState extends State<BirthControl> {
   }
 
   Future<void> update() async {
+    String choice = bc.text.trim().toLowerCase();
+
     try {
-      await supabase
+      // Check if another record (excluding the current one) has the same bc_choice
+      final existingChoice = await supabase
           .from('tbl_bc')
-          .update({'bc_choice': bc.text}).eq('bc_id', editId);
+          .select()
+          .ilike('bc_choice', choice)
+          .neq('bc_id', editId) // Exclude the current entry
+          .maybeSingle();
+
+      if (existingChoice != null) {
+        // Show error if duplicate exists
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "This birth control choice already exists!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ));
+      } else {
+        // Proceed with update
+        await supabase
+            .from('tbl_bc')
+            .update({'bc_choice': choice}).eq('bc_id', editId);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Updated successfully!",
+            style: GoogleFonts.quicksand().copyWith(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        ));
+
+        fetchData();
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "Updated",
-          style: TextStyle(color: Colors.white),
+          "Failed to update!",
+          style: GoogleFonts.quicksand().copyWith(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 43, 156),
+        backgroundColor: Colors.black,
       ));
-
-      fetchData();
-      bc.clear();
-      setState(() {
-        editId = 0;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Failed",
-            style: TextStyle(color: Colors.red),
-          ),
-          backgroundColor: Colors.black,
-        ),
-      );
-      bc.clear();
-      setState(() {
-        editId = 0;
-      });
     }
+
+    // Clear input and reset edit state
+    bc.clear();
+    setState(() {
+      editId = 0;
+    });
   }
 
   @override
@@ -194,12 +233,12 @@ class _BirthControlState extends State<BirthControl> {
                           },
                           cursorColor: Color.fromARGB(221, 6, 6, 6),
                           decoration: InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blueGrey),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white)),
-                          ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blueGrey),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white)),
+                              errorStyle: GoogleFonts.quicksand()),
                         ),
                       ),
                       SizedBox(
