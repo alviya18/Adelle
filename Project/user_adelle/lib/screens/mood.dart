@@ -123,7 +123,7 @@ class _AddMoodState extends State<AddMood> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 4, horizontal: 4),
                           child: Card(
-                            surfaceTintColor: Colors.white,
+                            surfaceTintColor: Colors.red,
                             shadowColor:
                                 // value == index
                                 //     ? Color(0xFFDC010E)
@@ -135,7 +135,7 @@ class _AddMoodState extends State<AddMood> {
                             elevation: 10,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(color: Color(0xFFDC010E)),
+                              // side: BorderSide(color: Color(0xFFDC010E)),
                             ),
                             child: InkWell(
                               onTap: () {

@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             buildNavItem(Icons.home, 0),
             buildNavItem(Icons.mood, 1),
-            buildNavItem(Icons.face_3, 2),
+            buildNavItem(Icons.face_4, 2),
             buildNavItem(Icons.bar_chart_outlined, 3),
             buildNavItem(Icons.wechat_rounded, 4),
           ],
@@ -143,8 +143,10 @@ class _HomePageContentState extends State<HomePageContent> {
                 Image.asset('assets/logo1.jpg', height: 45, width: 200),
                 GestureDetector(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: const Icon(Icons.person_outline_rounded,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                    ),
+                    child: const Icon(Icons.account_circle_rounded,
                         size: 35, color: Color(0xFFDC010E)),
                   ),
                   onTap: () {

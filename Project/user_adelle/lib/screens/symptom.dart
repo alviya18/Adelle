@@ -126,18 +126,21 @@ class _AddSymptomsState extends State<AddSymptoms> {
                         print(data);
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 4),
+                              vertical: 4, horizontal: 4),
                           child: Card(
-                            shadowColor: value == index
-                                ? Color(0xFFDC010E)
-                                : Colors.white,
+                            surfaceTintColor: Colors.red,
+                            shadowColor:
+                                // value == index
+                                //     ? Color(0xFFDC010E)
+                                //     : Colors.white,
+                                Color.fromARGB(64, 220, 1, 16),
                             color: value == index
                                 ? Color(0xFFDC010E)
                                 : Colors.white,
-                            elevation: 4,
+                            elevation: 10,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(color: Color(0xFFDC010E)),
+                              // side: BorderSide(color: Color(0xFFDC010E)),
                             ),
                             child: InkWell(
                               onTap: () {
