@@ -71,31 +71,47 @@ class _AddSymptomsState extends State<AddSymptoms> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFDC010E),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.close_sharp),
-          color: Colors.white,
-        ),
-        title: Text(
-          "Symptoms",
-          style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white),
-        ),
-      ),
       body: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-            SizedBox(
-              height: 10,
-            ),
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(81, 220, 1, 16),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text(
+                          "Symptoms",
+                          style: GoogleFonts.sortsMillGoudy().copyWith(
+                            fontSize: 22,
+                            // color: Color(0xFFDC010E),
+                            // fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
             answers.isEmpty
-                ? CircularProgressIndicator(
-                    color: Color(0xFFDC010E),
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFFDC010E),
+                    ),
                   )
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),

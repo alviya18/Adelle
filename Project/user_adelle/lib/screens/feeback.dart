@@ -30,8 +30,7 @@ class _FeedbacksState extends State<Feedbacks> {
       body: ListView(
         children: [
           ListTile(
-            title: Text("Register a Complaint",
-                style: GoogleFonts.sortsMillGoudy()),
+            title: Text("Submit Feedback", style: GoogleFonts.sortsMillGoudy()),
             onTap: () {
               Navigator.push(
                   context,

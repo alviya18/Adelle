@@ -67,31 +67,47 @@ class _AddMoodState extends State<AddMood> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFDC010E),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.close_sharp),
-          color: Colors.white,
-        ),
-        title: Text(
-          "Moods",
-          style: GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              height: 10,
-            ),
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(81, 220, 1, 16),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text(
+                          "Moods",
+                          style: GoogleFonts.sortsMillGoudy().copyWith(
+                            fontSize: 22,
+                            // color: Color(0xFFDC010E),
+                            // fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
             answers.isEmpty
-                ? CircularProgressIndicator(
-                    color: Color(0xFFDC010E),
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFFDC010E),
+                    ),
                   )
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -105,16 +121,18 @@ class _AddMoodState extends State<AddMood> {
                         final data = answers[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 4),
+                              vertical: 4, horizontal: 4),
                           child: Card(
-                            shadowColor: value == index
-                                ? Color(0xFFDC010E)
-                                : Colors.white,
-                            //  Color(0xFFDC010E),
+                            surfaceTintColor: Colors.white,
+                            shadowColor:
+                                // value == index
+                                //     ? Color(0xFFDC010E)
+                                //     : Colors.white,
+                                Color.fromARGB(64, 220, 1, 16),
                             color: value == index
                                 ? Color(0xFFDC010E)
                                 : Colors.white,
-                            elevation: 4,
+                            elevation: 10,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                               side: BorderSide(color: Color(0xFFDC010E)),

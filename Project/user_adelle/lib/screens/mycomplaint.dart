@@ -22,8 +22,8 @@ class _MycomplaintState extends State<Mycomplaint> {
       final response = await supabase
           .from('tbl_complaint')
           .select()
-          .eq('user_id', supabase.auth.currentUser!.id)
-          .neq('complaint_status', 1);
+          .eq('user_id', supabase.auth.currentUser!.id);
+      // .neq('complaint_status', 1);
 
       setState(() {
         answers = response;
@@ -102,38 +102,48 @@ class _MycomplaintState extends State<Mycomplaint> {
                         side: BorderSide(color: Color(0xFFDC010E)),
                       ),
                       child: InkWell(
-                        onTap: () {
-                          print(data['complaint_id']);
-                          setState(() {
-                            value = index;
-                            selectedValue = data['complaint_id'].toString();
-                          });
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.all(10),
-                          child: ListTile(
-                              title: Text(
-                                data['complaint_title'],
-                                style: GoogleFonts.sortsMillGoudy().copyWith(
-                                  // fontWeight: FontWeight.bold,
-                                  color: value == index
-                                      ? Colors.white
-                                      : Color(0xFFDC010E),
-                                  fontSize: 16,
+                          onTap: () {
+                            print(data['complaint_id']);
+                            setState(() {
+                              value = index;
+                              selectedValue = data['complaint_id'].toString();
+                            });
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.all(10),
+                            child: ListTile(
+                                title: Text(
+                                  data['complaint_title'],
+                                  style: GoogleFonts.sortsMillGoudy().copyWith(
+                                    // fontWeight: FontWeight.bold,
+                                    color: value == index
+                                        ? Colors.white
+                                        : Color(0xFFDC010E),
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                data['complaint_content'],
-                                style: GoogleFonts.sortsMillGoudy().copyWith(
-                                  color: value == index
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 16,
+                                subtitle: Text(
+                                  data['complaint_content'],
+                                  style: GoogleFonts.sortsMillGoudy().copyWith(
+                                    color: value == index
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              )),
-                        ),
-                      ));
+                                trailing: Text(
+                                  data['complaint_status'] == 1
+                                      ? "Replied"
+                                      : "",
+                                  style: GoogleFonts.sortsMillGoudy().copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: value == index
+                                        ? Colors.white
+                                        : Colors.green,
+                                  ),
+                                )),
+                          )));
                 },
               ),
             ),

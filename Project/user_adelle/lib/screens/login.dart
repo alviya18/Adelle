@@ -1,4 +1,3 @@
-import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,12 +29,6 @@ class _LoginPageState extends State<LoginPage> {
         );
         final User? user = res.user;
         if (user!.id.isNotEmpty) {
-          setState(() {
-            CherryToast.success(
-              backgroundColor: Colors.white,
-              title: const Text("Welcome!"),
-            ).show(context);
-          });
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
