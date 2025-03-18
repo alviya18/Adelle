@@ -103,11 +103,17 @@ class _MycomplaintState extends State<Mycomplaint> {
                       ),
                       child: InkWell(
                           onTap: () {
-                            print(data['complaint_id']);
                             setState(() {
-                              value = index;
-                              selectedValue = data['complaint_id'].toString();
+                              if (selectedValue ==
+                                  data['complaint_id'].toString()) {
+                                value = null;
+                                selectedValue = null;
+                              } else {
+                                value = index;
+                                selectedValue = data['complaint_id'].toString();
+                              }
                             });
+                            print(data['complaint_id']);
                           },
                           child: Container(
                             alignment: Alignment.center,

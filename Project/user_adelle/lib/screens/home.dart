@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
-import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
-import 'package:scrollable_clean_calendar/utils/enums.dart';
+import 'package:user_adelle/components/home_calender.dart';
 import 'package:user_adelle/screens/chatbot.dart';
 import 'package:user_adelle/screens/mood.dart';
 import 'package:user_adelle/screens/profile.dart';
@@ -87,37 +85,6 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
-  bool selectable = false;
-  late CleanCalendarController calendarController;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeCalendarController();
-  }
-
-  void _initializeCalendarController() {
-    calendarController = CleanCalendarController(
-      rangeMode: false,
-      readOnly: !selectable,
-      minDate: DateTime.now(),
-      maxDate: DateTime.now().add(const Duration(days: 365)),
-      onDayTapped: (date) {
-        if (selectable) {
-          print("Selected Date: $date");
-        }
-      },
-      weekdayStart: DateTime.monday,
-    );
-  }
-
-  void _toggleSelection() {
-    setState(() {
-      selectable = !selectable;
-      _initializeCalendarController();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -159,51 +126,7 @@ class _HomePageContentState extends State<HomePageContent> {
           ),
         ),
         SizedBox(height: 5),
-        Container(
-          height: 610,
-          margin: const EdgeInsets.all(12),
-          padding: EdgeInsets.symmetric(vertical: 5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white.withOpacity(0.85),
-          ),
-          child: ScrollableCleanCalendar(
-            daySelectedBackgroundColor: Color(0xFFDC010E),
-            dayTextStyle: TextStyle(fontSize: 12),
-            weekdayTextStyle: TextStyle(fontSize: 13),
-            monthTextStyle: TextStyle(fontSize: 20),
-            calendarController: calendarController,
-            layout: Layout.BEAUTY,
-            calendarCrossAxisSpacing: 0,
-          ),
-        ),
-        GestureDetector(
-          onTap: _toggleSelection,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 35),
-              margin: EdgeInsets.symmetric(vertical: 1, horizontal: 15),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(2, 4),
-                  ),
-                ],
-                color: selectable ? Color(0xFFDC010E) : Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                selectable ? "Edit Period" : "Mark Period",
-                style: TextStyle(
-                    color: selectable ? Colors.white : Color(0xFFDC010E)),
-              ),
-            ),
-          ),
-        )
+        HomeCalender()
       ],
     );
   }

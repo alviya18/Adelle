@@ -45,7 +45,8 @@ class _AddMoodState extends State<AddMood> {
         'userEmotions_year': DateTime.now().year,
       });
       CherryToast.success(title: const Text("Done!")).show(context);
-
+      value = null;
+      selectedValue = null;
       fetchData();
     } catch (e) {
       print(e);
@@ -141,8 +142,15 @@ class _AddMoodState extends State<AddMood> {
                               onTap: () {
                                 print(data['emotion_id']);
                                 setState(() {
-                                  value = index;
-                                  selectedValue = data['emotion_id'].toString();
+                                  if (selectedValue ==
+                                      data['emotion_id'].toString()) {
+                                    value = null;
+                                    selectedValue = null;
+                                  } else {
+                                    value = index;
+                                    selectedValue =
+                                        data['emotion_id'].toString();
+                                  }
                                 });
                               },
                               child: Container(

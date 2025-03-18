@@ -101,10 +101,16 @@ class _MyFeedbacksState extends State<MyFeedbacks> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          print(data['complaint_id']);
+                          print(data['feedback_id']);
                           setState(() {
-                            value = index;
-                            selectedValue = data['complaint_id'].toString();
+                            if (selectedValue ==
+                                data['feedback_id'].toString()) {
+                              value = null;
+                              selectedValue = null;
+                            } else {
+                              value = index;
+                              selectedValue = data['feedback_id'].toString();
+                            }
                           });
                         },
                         child: Container(

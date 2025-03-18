@@ -50,6 +50,8 @@ class _AddSymptomsState extends State<AddSymptoms> {
           "Done!",
         ),
       ).show(context);
+      value = null;
+      selectedValue = null;
       fetchData();
     } catch (e) {
       print(e);
@@ -123,7 +125,6 @@ class _AddSymptomsState extends State<AddSymptoms> {
                       itemCount: answers.length,
                       itemBuilder: (context, index) {
                         final data = answers[index];
-                        print(data);
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 4, horizontal: 4),
@@ -144,10 +145,16 @@ class _AddSymptomsState extends State<AddSymptoms> {
                             ),
                             child: InkWell(
                               onTap: () {
-                                print(data['symptom_id']);
                                 setState(() {
-                                  value = index;
-                                  selectedValue = data['symptom_id'].toString();
+                                  if (selectedValue ==
+                                      data['symptom_id'].toString()) {
+                                    value = null;
+                                    selectedValue = null;
+                                  } else {
+                                    value = index;
+                                    selectedValue =
+                                        data['symptom_id'].toString();
+                                  }
                                 });
                               },
                               child: Container(

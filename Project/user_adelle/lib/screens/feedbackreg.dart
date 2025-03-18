@@ -58,7 +58,7 @@ class _RegisterFeedbackState extends State<RegisterFeedback> {
             icon: Icon(Icons.close_sharp),
             color: Colors.white,
           ),
-          title: Text("Submit a Feedback",
+          title: Text("Submit Feedback",
               style:
                   GoogleFonts.sortsMillGoudy().copyWith(color: Colors.white))),
       body: Column(
