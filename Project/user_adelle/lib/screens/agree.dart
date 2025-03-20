@@ -43,7 +43,7 @@ Your responses will allow us to personalize your experience.''',
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 250,
+                    height: 210,
                   ),
                   ElevatedButton(
                     onPressed: () {

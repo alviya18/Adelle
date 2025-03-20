@@ -16,20 +16,35 @@ class HomeCalender extends StatefulWidget {
 class _HomeCalenderState extends State<HomeCalender> {
   bool selectable = false;
   late CleanCalendarController calendarController;
-  DateTime? startDate; // Stores start of period
-  DateTime? endDate; // Stores end of period
-  int cycleDuration = 4; // Default duration in days
+  DateTime? startDate;
+  DateTime? endDate;
+  DateTime? nextCycleStart;
+  DateTime? nextCycleEnd;
+  DateTime? ovStart;
+  DateTime? ovPeak;
+  DateTime? ovEnd;
 
-  // List to store all historical periods
-  List<Map<String, dynamic>> historicalPeriods = [];
+  int cycleDuration = 4;
+  int cycleLength = 28;
+
+  List<Map<String, dynamic>> cycleHistory = [];
+  List<Map<String, dynamic>> ovulationHistory = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchUserData(); // Load user data including cycle duration
+    calendarController = CleanCalendarController(
+      rangeMode: true,
+      readOnly: !selectable,
+      minDate: DateTime(2024, 1, 1),
+      maxDate: DateTime(2026, 12, 31),
+      initialFocusDate: DateTime(2025, 5, 1),
+      weekdayStart: DateTime.monday,
+    );
+    _fetchUserDataAndPredict();
   }
 
-  Future<void> _fetchUserData() async {
+  Future<void> _fetchUserDataAndPredict() async {
     try {
       final user = await supabase
           .from('tbl_user')
@@ -37,162 +52,186 @@ class _HomeCalenderState extends State<HomeCalender> {
           .eq('user_id', supabase.auth.currentUser!.id)
           .single();
 
-      setState(() {
-        cycleDuration = user['user_cycleDuration'] ?? 4;
-
-        if (user['user_lastPeriod'] != null) {
-          startDate = DateTime.parse(user['user_lastPeriod']);
-          // Calculate end date based on cycle duration
-          endDate = startDate!.add(Duration(days: cycleDuration - 1));
-        }
-      });
-
-      // Fetch ALL historical periods from tbl_cycleDates
       final periods = await supabase
           .from('tbl_cycleDates')
           .select()
           .eq('user_id', supabase.auth.currentUser!.id)
           .order('cycleDate_start', ascending: false);
 
-      if (periods.isNotEmpty) {
-        setState(() {
-          historicalPeriods = List<Map<String, dynamic>>.from(periods);
+      final ovulation = await supabase
+          .from('tbl_ovulationCycle')
+          .select()
+          .eq('user_id', supabase.auth.currentUser!.id)
+          .order('ovulationCycle_peakDate', ascending: false);
 
-          // Set the most recent period as the current one
-          if (periods.isNotEmpty) {
-            startDate = DateTime.parse(periods[0]['cycleDate_start']);
-            endDate = DateTime.parse(periods[0]['cycleDate_end']);
-          }
-        });
-      }
+      setState(() {
+        cycleDuration = user['user_cycleDuration'] ?? 4;
+        cycleLength = user['user_cycleLength'] ?? 28;
+        cycleHistory = List<Map<String, dynamic>>.from(periods);
+        ovulationHistory = List<Map<String, dynamic>>.from(ovulation);
 
-      _initializeCalendarController(); // Initialize controller after fetching data
+        if (cycleHistory.isNotEmpty) {
+          startDate = DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal();
+          endDate = DateTime.parse(cycleHistory[0]['cycleDate_end']).toLocal();
+        } else if (user['user_lastPeriod'] != null) {
+          startDate = DateTime.parse(user['user_lastPeriod']).toLocal();
+          endDate = startDate!.add(Duration(days: cycleDuration - 1));
+          cycleHistory.add({
+            'cycleDate_start': DateFormat('yyyy-MM-dd').format(startDate!),
+            'cycleDate_end': DateFormat('yyyy-MM-dd').format(endDate!),
+            'user_id': supabase.auth.currentUser!.id,
+            'cycleDate_month': startDate!.month,
+          });
+        }
+
+        if (startDate != null) {
+          nextCycleStart = startDate!.add(Duration(days: cycleLength));
+          nextCycleEnd = nextCycleStart!.add(Duration(days: cycleDuration - 1));
+          ovPeak = nextCycleStart!.subtract(Duration(days: 14));
+          ovStart = ovPeak!.subtract(Duration(days: 5));
+          ovEnd = ovPeak!.add(Duration(days: 1));
+        }
+
+        print('Last Period: $startDate - $endDate');
+        print('Predicted Cycle: $nextCycleStart - $nextCycleEnd');
+        print('Predicted Ovulation: $ovStart - $ovEnd (Peak: $ovPeak)');
+        print('Cycle History: $cycleHistory');
+      });
+
+      _initializeCalendarController();
     } catch (e) {
-      print("Error fetching user data: $e");
-      _initializeCalendarController(); // Initialize anyway to avoid errors
+      print("Error fetching data: $e");
+      _initializeCalendarController();
     }
-  }
-
-  // Check if a date is within any historical period
-  bool isHistoricalPeriodDate(DateTime date) {
-    final dateString = DateFormat('yyyy-MM-dd').format(date);
-
-    for (var period in historicalPeriods) {
-      final startDate = DateTime.parse(period['cycleDate_start']);
-      final endDate = DateTime.parse(period['cycleDate_end']);
-
-      if (date.isAtSameMomentAs(startDate) ||
-          date.isAtSameMomentAs(endDate) ||
-          (date.isAfter(startDate) && date.isBefore(endDate))) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   void _initializeCalendarController() {
     calendarController = CleanCalendarController(
-      rangeMode: true, // Enable range selection
+      rangeMode: true,
       readOnly: !selectable,
-      minDate: DateTime.now()
-          .subtract(const Duration(days: 365)), // Allow selecting past dates
-      maxDate: DateTime.now().add(const Duration(days: 365)),
-      initialDateSelected: startDate, // Set stored start date
-      endDateSelected: endDate, // Set stored end date
+      minDate: DateTime(2024, 1, 1),
+      maxDate: DateTime(2026, 12, 31),
+      initialDateSelected: selectable ? null : startDate,
+      endDateSelected: selectable ? null : endDate,
+      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
       onRangeSelected: (start, end) {
         if (selectable && start != null) {
-          // Calculate the end date based on cycle duration
-          final calculatedEndDate =
-              start.add(Duration(days: cycleDuration - 1));
-
+          final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
           setState(() {
             startDate = start;
-            endDate = calculatedEndDate;
+            endDate = calculatedEndDate; // Auto-set end date
           });
-
-          // We need to reinitialize the controller with the new dates
           _reinitializeController();
         }
       },
       weekdayStart: DateTime.monday,
     );
-    setState(() {}); // Rebuild widget after initializing controller
+    setState(() {});
   }
 
-  // Reinitialize the controller to update the date range
   void _reinitializeController() {
     calendarController = CleanCalendarController(
       rangeMode: true,
       readOnly: !selectable,
-      minDate: DateTime.now().subtract(const Duration(days: 365)),
-      maxDate: DateTime.now().add(const Duration(days: 365)),
-      initialDateSelected: startDate,
-      endDateSelected: endDate,
+      minDate: DateTime(2024, 1, 1),
+      maxDate: DateTime(2026, 12, 31),
+      initialDateSelected: selectable ? null : startDate,
+      endDateSelected: selectable ? null : endDate,
+      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
       onRangeSelected: (start, end) {
         if (selectable && start != null) {
-          final calculatedEndDate =
-              start.add(Duration(days: cycleDuration - 1));
-
+          final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
           setState(() {
             startDate = start;
             endDate = calculatedEndDate;
           });
-
           _reinitializeController();
         }
       },
       weekdayStart: DateTime.monday,
     );
-
-    // Force rebuild
     setState(() {});
   }
 
-  void _toggleSelection() {
-    setState(() {
-      selectable = !selectable;
-    });
-
-    _initializeCalendarController();
-
-    // If we're exiting selection mode, save the period
-    if (!selectable && startDate != null && endDate != null) {
-      _savePeriodToDB();
+  Future<void> _editEndDate() async {
+    if (startDate == null) return;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: endDate ?? startDate!.add(Duration(days: cycleDuration - 1)),
+      firstDate: startDate!, // End date must be on or after start date
+      lastDate: DateTime(2026, 12, 31),
+      helpText: 'Select End Date of Period',
+    );
+    if (picked != null && picked != endDate) {
+      setState(() {
+        endDate = picked;
+      });
+      _reinitializeController();
     }
+  }
+
+  void _cancelSelection() {
+    setState(() {
+      selectable = false;
+      startDate = cycleHistory.isNotEmpty
+          ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
+          : null;
+      endDate = cycleHistory.isNotEmpty
+          ? DateTime.parse(cycleHistory[0]['cycleDate_end']).toLocal()
+          : null;
+    });
+    _initializeCalendarController();
   }
 
   Future<void> _savePeriodToDB() async {
     if (startDate != null && endDate != null) {
       try {
-        // Update the last period in tbl_user
         await supabase.from('tbl_user').update({
           'user_lastPeriod': DateFormat('yyyy-MM-dd').format(startDate!),
         }).eq('user_id', supabase.auth.currentUser!.id);
 
-        // Get the month number for the cycleDate_month field
         final month = startDate!.month;
-
-        // Insert the new period into tbl_cycleDates
         await supabase.from('tbl_cycleDates').insert({
           'cycleDate_start': DateFormat('yyyy-MM-dd').format(startDate!),
           'cycleDate_end': DateFormat('yyyy-MM-dd').format(endDate!),
           'user_id': supabase.auth.currentUser!.id,
-          'cycleDate_month': month.toString(),
+          'cycleDate_month': month,
         });
 
-        // Add the new period to our historical periods list
+        cycleDuration = endDate!.difference(startDate!).inDays + 1;
+
+        nextCycleStart = startDate!.add(Duration(days: cycleLength));
+        nextCycleEnd = nextCycleStart!.add(Duration(days: cycleDuration - 1));
+        ovPeak = nextCycleStart!.subtract(Duration(days: 14));
+        ovStart = ovPeak!.subtract(Duration(days: 5));
+        ovEnd = ovPeak!.add(Duration(days: 1));
+
+        await supabase.from('tbl_ovulationCycle').insert({
+          'ovulationCycle_start': DateFormat('yyyy-MM-dd').format(ovStart!),
+          'ovulationCycle_end': DateFormat('yyyy-MM-dd').format(ovEnd!),
+          'ovulationCycle_peakDate': DateFormat('yyyy-MM-dd').format(ovPeak!),
+          'ovulationCycle_month': nextCycleStart!.month,
+          'user_id': supabase.auth.currentUser!.id,
+        });
+
         setState(() {
-          historicalPeriods.insert(0, {
+          cycleHistory.insert(0, {
             'cycleDate_start': DateFormat('yyyy-MM-dd').format(startDate!),
             'cycleDate_end': DateFormat('yyyy-MM-dd').format(endDate!),
             'user_id': supabase.auth.currentUser!.id,
-            'cycleDate_month': month.toString(),
+            'cycleDate_month': month,
+          });
+          ovulationHistory.insert(0, {
+            'ovulationCycle_start': DateFormat('yyyy-MM-dd').format(ovStart!),
+            'ovulationCycle_end': DateFormat('yyyy-MM-dd').format(ovEnd!),
+            'ovulationCycle_peakDate': DateFormat('yyyy-MM-dd').format(ovPeak!),
+            'ovulationCycle_month': nextCycleStart!.month,
+            'user_id': supabase.auth.currentUser!.id,
           });
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Period dates saved successfully')),
+          SnackBar(content: Text('Period and ovulation saved successfully')),
         );
       } catch (e) {
         print("Error saving period: $e");
@@ -203,40 +242,115 @@ class _HomeCalenderState extends State<HomeCalender> {
     }
   }
 
-  // Custom day widget builder to show historical periods
-  // Custom day widget builder to show historical periods
+  void _toggleSelection() {
+    setState(() {
+      selectable = !selectable;
+    });
+    _initializeCalendarController();
+    if (!selectable && startDate != null && endDate != null) {
+      _savePeriodToDB();
+    }
+  }
+
+  bool _isDateInRange(DateTime date, DateTime? start, DateTime? end) {
+    if (start == null || end == null) return false;
+    DateTime normalizedDate = DateTime(date.year, date.month, date.day);
+    DateTime normalizedStart = DateTime(start.year, start.month, start.day);
+    DateTime normalizedEnd = DateTime(end.year, end.month, end.day);
+    return normalizedDate.isAtSameMomentAs(normalizedStart) ||
+        normalizedDate.isAtSameMomentAs(normalizedEnd) ||
+        (normalizedDate.isAfter(normalizedStart) && normalizedDate.isBefore(normalizedEnd));
+  }
+
   Widget _buildDayWidget(BuildContext context, DayValues dayValues) {
-    final date = dayValues
-        .day; // Use 'day' instead of 'date', assuming this is the property name
+    final date = dayValues.day;
+    final today = DateTime.now();
+    final isToday = date.year == today.year && date.month == today.month && date.day == today.day;
+
     bool isSelected = false;
     bool isInRange = false;
 
-    // Check if date is in current selection
-    if (startDate != null && endDate != null) {
-      isSelected =
-          date.isAtSameMomentAs(startDate!) || date.isAtSameMomentAs(endDate!);
-      isInRange = date.isAfter(startDate!) && date.isBefore(endDate!);
+    if (selectable && startDate != null && endDate != null) {
+      isSelected = _isDateInRange(date, startDate, endDate);
+      isInRange = isSelected;
+      if (isSelected) print('Selected Date: $date');
     }
 
-    // Check if date is in any historical period
-    bool isHistorical = isHistoricalPeriodDate(date);
+    bool isHistoricalCycle = false;
+    for (var period in cycleHistory) {
+      final start = DateTime.parse(period['cycleDate_start']).toLocal();
+      final end = DateTime.parse(period['cycleDate_end']).toLocal();
+      if (_isDateInRange(date, start, end)) {
+        isHistoricalCycle = true;
+        print('Historical Cycle Date: $date');
+        break;
+      }
+    }
 
-    // Default day style
+    bool isOvulationWindow = false;
+    bool isOvulationPeak = false;
+    for (var ovulation in ovulationHistory) {
+      final start = DateTime.parse(ovulation['ovulationCycle_start']).toLocal();
+      final end = DateTime.parse(ovulation['ovulationCycle_end']).toLocal();
+      final peak = DateTime.parse(ovulation['ovulationCycle_peakDate']).toLocal();
+      if (_isDateInRange(date, start, end)) {
+        isOvulationWindow = true;
+        if (date.isAtSameMomentAs(peak)) {
+          isOvulationPeak = true;
+          print('Ovulation Peak Date: $date');
+        } else {
+          print('Ovulation Window Date: $date');
+        }
+        break;
+      }
+    }
+
+    bool isPredictedCycle = _isDateInRange(date, nextCycleStart, nextCycleEnd);
+    if (isPredictedCycle) print('Predicted Cycle Date: $date');
+
+    bool isPredictedOvulation = _isDateInRange(date, ovStart, ovEnd);
+    bool isPredictedOvulationPeak = ovPeak != null && date.isAtSameMomentAs(ovPeak!);
+    if (isPredictedOvulation) {
+      if (isPredictedOvulationPeak) {
+        print('Predicted Ovulation Peak Date: $date');
+      } else {
+        print('Predicted Ovulation Date: $date');
+      }
+    }
+
+    Color? backgroundColor;
+    BoxDecoration decoration;
+
+    if (isSelected || isInRange) {
+      backgroundColor = Colors.red; // Solid red for current selection
+    } else if (isPredictedOvulationPeak) {
+      backgroundColor = Colors.green; // Solid green for predicted ovulation peak
+    } else if (isPredictedOvulation) {
+      backgroundColor = Colors.green.withOpacity(0.3); // Light green for predicted ovulation
+    } else if (isPredictedCycle) {
+      backgroundColor = Colors.orange.withOpacity(0.5); // Orange for predicted period
+    } else if (isHistoricalCycle) {
+      backgroundColor = Colors.redAccent.withOpacity(0.7); // Bright red for historical periods
+    } else if (isOvulationPeak) {
+      backgroundColor = Colors.purple; // Solid purple for ovulation peak
+    } else if (isOvulationWindow) {
+      backgroundColor = Colors.purple.withOpacity(0.3); // Light purple for ovulation window
+    }
+
+    decoration = BoxDecoration(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(4),
+      border: isToday ? Border.all(color: Colors.black, width: 2) : null,
+    );
+
     final dayStyle = TextStyle(
       fontSize: 12,
-      color: isSelected || isInRange ? Colors.white : Colors.black,
+      color: (isSelected || isInRange || isOvulationPeak || isPredictedOvulationPeak) ? Colors.white : Colors.black,
     );
 
     return Container(
       margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: isSelected || isInRange
-            ? const Color(0xFFDC010E)
-            : isHistorical
-                ? const Color(0xFFFFCCCE) // Light red for historical periods
-                : Colors.transparent,
-        borderRadius: BorderRadius.circular(4),
-      ),
+      decoration: decoration,
       child: Center(
         child: Text(
           date.day.toString(),
@@ -246,30 +360,81 @@ class _HomeCalenderState extends State<HomeCalender> {
     );
   }
 
+  Widget _buildLegend() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _legendItem(Colors.red, 'Current Selection'),
+          _legendItem(Colors.redAccent.withOpacity(0.7), 'Historical Period'),
+          _legendItem(Colors.purple, 'Ovulation Peak'),
+          _legendItem(Colors.purple.withOpacity(0.3), 'Ovulation Window'),
+          _legendItem(Colors.orange.withOpacity(0.5), 'Predicted Period'),
+          _legendItem(Colors.green, 'Predicted Ovulation Peak'),
+          _legendItem(Colors.green.withOpacity(0.3), 'Predicted Ovulation'),
+          _legendItem(null, 'Today (Black Border)'),
+        ],
+      ),
+    );
+  }
+
+  Widget _legendItem(Color? color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(4),
+              border: color == null ? Border.all(color: Colors.black, width: 2) : null,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
-          height: 550,
+          height: 270,
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: Colors.white.withOpacity(0.85),
           ),
-          child: calendarController != null
-              ? ScrollableCleanCalendar(
-                  daySelectedBackgroundColor: const Color(0xFFDC010E),
-                  dayTextStyle: const TextStyle(fontSize: 12),
-                  weekdayTextStyle: const TextStyle(fontSize: 13),
-                  monthTextStyle: const TextStyle(fontSize: 20),
-                  calendarController: calendarController,
-                  layout: Layout.BEAUTY,
-                  calendarCrossAxisSpacing: 0,
-                  dayBuilder: _buildDayWidget, // Pass the updated function here
-                )
-              : const Center(child: CircularProgressIndicator()),
+          child: ScrollableCleanCalendar(
+            daySelectedBackgroundColor: Colors.red,
+            dayTextStyle: const TextStyle(fontSize: 12),
+            weekdayTextStyle: const TextStyle(fontSize: 13),
+            monthTextStyle: const TextStyle(fontSize: 20),
+            calendarController: calendarController,
+            layout: Layout.BEAUTY,
+            calendarCrossAxisSpacing: 0,
+            dayBuilder: _buildDayWidget,
+          ),
         ),
         if (startDate != null && endDate != null && !selectable)
           Container(
@@ -290,8 +455,7 @@ class _HomeCalenderState extends State<HomeCalender> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.calendar_today,
-                    color: Color(0xFFDC010E), size: 18),
+                const Icon(Icons.calendar_today, color: Colors.red, size: 18),
                 const SizedBox(width: 8),
                 Text(
                   'Last Period: ${DateFormat('MMM dd').format(startDate!)} - ${DateFormat('MMM dd').format(endDate!)}',
@@ -303,35 +467,86 @@ class _HomeCalenderState extends State<HomeCalender> {
               ],
             ),
           ),
+        _buildLegend(),
         const SizedBox(height: 10),
-        GestureDetector(
-          onTap: _toggleSelection,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
-              margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 15),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(2, 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (selectable && startDate != null && endDate != null)
+              GestureDetector(
+                onTap: _editEndDate,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                  margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(2, 4),
+                      ),
+                    ],
                   ),
-                ],
-                color: selectable ? const Color(0xFFDC010E) : Colors.white,
-                borderRadius: BorderRadius.circular(15),
+                  child: const Text(
+                    "Edit End Date",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ),
-              child: Text(
-                selectable ? "Save Period" : "Mark Period",
-                style: TextStyle(
-                  color: selectable ? Colors.white : const Color(0xFFDC010E),
-                  fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: _toggleSelection,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
+                margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(2, 4),
+                    ),
+                  ],
+                  color: selectable ? Colors.red : Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: selectable ? Icon(Icons.save, color: Colors.white) :
+                Text("Mark Period",
+                  style: TextStyle(
+                    color: selectable ? Colors.white : Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-          ),
+            if (selectable)
+              GestureDetector(
+                onTap: _cancelSelection,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                  margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(Icons.close, color: Colors.white),
+                ),
+              ),
+          ],
         ),
       ],
     );
