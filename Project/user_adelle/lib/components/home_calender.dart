@@ -38,8 +38,8 @@ class _HomeCalenderState extends State<HomeCalender> {
       readOnly: !selectable,
       minDate: DateTime(2024, 1, 1),
       maxDate: DateTime(2026, 12, 31),
-      initialFocusDate: DateTime(2025, 5, 1),
-      weekdayStart: DateTime.monday,
+      initialFocusDate: DateTime.now(),
+      weekdayStart: DateTime.sunday,
     );
     _fetchUserDataAndPredict();
   }
@@ -418,8 +418,8 @@ class _HomeCalenderState extends State<HomeCalender> {
     return Column(
       children: [
         Container(
-          height: 270,
-          margin: const EdgeInsets.all(12),
+          height: 300,
+          margin: const EdgeInsets.symmetric( horizontal: 12),
           padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -468,7 +468,6 @@ class _HomeCalenderState extends State<HomeCalender> {
             ),
           ),
         _buildLegend(),
-        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
