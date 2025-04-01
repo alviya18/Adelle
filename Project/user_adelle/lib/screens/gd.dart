@@ -14,6 +14,7 @@ class _GynacologicalDiseaseState extends State<GynacologicalDisease> {
   int selectedAnswerIndex = -1;
   List<Map<String, dynamic>> answers = [];
 
+  @override
   void initState() {
     super.initState();
     fetchData();

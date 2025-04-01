@@ -126,8 +126,6 @@ class _CycleState extends State<Cycle> {
       } catch (e) {}
     }
 
-    ;
-
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

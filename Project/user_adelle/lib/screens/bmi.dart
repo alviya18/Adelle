@@ -13,39 +13,40 @@ class _BmiState extends State<Bmi> {
   String bmiRemark = "";
 
   Future<void> update() async {
-    final data = await supabase
-        .from('tbl_user')
-        .select()
-        .eq('user_id', supabase.auth.currentUser!.id)
-        .single();
-    double weight = double.parse(data['user_weight']);
-    double height = double.parse(data['user_height']);
-    double yob = double.parse(data['user_yob']);
-    double age = DateTime.now().year - yob;
-    double bmi = weight / ((height / 100) * (height / 100));
-    String remark = "";
-    if (age > 20) {
-      if (bmi < 18.5) {
-        remark = "Underweight";
-      } else if (bmi >= 18.5 && bmi <= 24.9) {
-        remark = "Normal";
-      } else if (bmi >= 25 && bmi <= 29.9) {
-        remark = "Overweight";
-      } else {
-        remark = "Obsese";
-      }
-    } else {
-      remark =
-          "You are under 20yrs and still growing. We do not have adequate information to calculate child BMI";
-    }
-
-    setState(() {
-      bmiRemark = remark;
-    });
     try {
+      final data = await supabase
+          .from('tbl_user')
+          .select()
+          .eq('user_id', supabase.auth.currentUser!.id)
+          .single();
+      double weight = double.parse(data['user_weight']);
+      double height = double.parse(data['user_height']);
+      double yob = double.parse(data['user_yob']);
+      double age = DateTime.now().year - yob;
+      double bmi = weight / ((height / 100) * (height / 100));
+      String bodyMassIndex = bmi.toString();
+      String remark = "";
+      if (age > 20) {
+        if (bmi < 18.5) {
+          remark = "Underweight";
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+          remark = "Normal";
+        } else if (bmi >= 25 && bmi <= 29.9) {
+          remark = "Overweight";
+        } else {
+          remark = "Obsese";
+        }
+      } else {
+        remark =
+            "You are under 20yrs and still growing. We do not have adequate information to calculate child BMI";
+      }
+
+      setState(() {
+        bmiRemark = remark;
+      });
       await supabase
           .from('tbl_user')
-          .update({'user_bmi': bmi, 'user_bmiRemark': remark}).eq(
+          .update({'user_bmi': bodyMassIndex, 'user_bmiRemarks': remark}).eq(
         'user_id',
         supabase.auth.currentUser!.id,
       );

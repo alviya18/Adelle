@@ -73,11 +73,10 @@ class _AddSymptomsState extends State<AddSymptoms> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+      body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -109,79 +108,82 @@ class _AddSymptomsState extends State<AddSymptoms> {
                     ),
                   ],
                 )),
-            answers.isEmpty
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFDC010E),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
-                      itemCount: answers.length,
-                      itemBuilder: (context, index) {
-                        final data = answers[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 4),
-                          child: Card(
-                            surfaceTintColor: Colors.red,
-                            shadowColor:
-                                // value == index
-                                //     ? Color(0xFFDC010E)
-                                //     : Colors.white,
-                                Color.fromARGB(64, 220, 1, 16),
-                            color: value == index
-                                ? Color(0xFFDC010E)
-                                : Colors.white,
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // side: BorderSide(color: Color(0xFFDC010E)),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedValue ==
-                                      data['symptom_id'].toString()) {
-                                    value = null;
-                                    selectedValue = null;
-                                  } else {
-                                    value = index;
-                                    selectedValue =
-                                        data['symptom_id'].toString();
-                                  }
-                                });
-                              },
-                              child: Container(
-                                height: 180,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.all(10),
-                                child: Text(
-                                  data['symptom_choice'],
-                                  style: GoogleFonts.sortsMillGoudy().copyWith(
-                                    color: value == index
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 16,
+            Expanded(
+              child: SingleChildScrollView(
+                child: answers.isEmpty
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFDC010E),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: GridView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
+                          itemCount: answers.length,
+                          itemBuilder: (context, index) {
+                            final data = answers[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 4),
+                              child: Card(
+                                surfaceTintColor: Colors.red,
+                                shadowColor:
+                                    // value == index
+                                    //     ? Color(0xFFDC010E)
+                                    //     : Colors.white,
+                                    Color.fromARGB(64, 220, 1, 16),
+                                color: value == index
+                                    ? Color(0xFFDC010E)
+                                    : Colors.white,
+                                elevation: 10,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  // side: BorderSide(color: Color(0xFFDC010E)),
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (selectedValue ==
+                                          data['symptom_id'].toString()) {
+                                        value = null;
+                                        selectedValue = null;
+                                      } else {
+                                        value = index;
+                                        selectedValue =
+                                            data['symptom_id'].toString();
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 180,
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.all(10),
+                                    child: Text(
+                                      data['symptom_choice'],
+                                      style:
+                                          GoogleFonts.sortsMillGoudy().copyWith(
+                                        color: value == index
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-            SizedBox(
-              height: 20,
+                            );
+                          },
+                        ),
+                      ),
+              ),
             ),
-          ])),
+          ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           insert();

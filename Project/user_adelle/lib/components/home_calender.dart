@@ -71,7 +71,8 @@ class _HomeCalenderState extends State<HomeCalender> {
         ovulationHistory = List<Map<String, dynamic>>.from(ovulation);
 
         if (cycleHistory.isNotEmpty) {
-          startDate = DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal();
+          startDate =
+              DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal();
           endDate = DateTime.parse(cycleHistory[0]['cycleDate_end']).toLocal();
         } else if (user['user_lastPeriod'] != null) {
           startDate = DateTime.parse(user['user_lastPeriod']).toLocal();
@@ -115,8 +116,9 @@ class _HomeCalenderState extends State<HomeCalender> {
       endDateSelected: selectable ? null : endDate,
       initialFocusDate: startDate ?? DateTime(2025, 5, 1),
       onRangeSelected: (start, end) {
-        if (selectable && start != null) {
-          final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
+        if (selectable) {
+          final calculatedEndDate =
+              start.add(Duration(days: cycleDuration - 1));
           setState(() {
             startDate = start;
             endDate = calculatedEndDate; // Auto-set end date
@@ -139,8 +141,9 @@ class _HomeCalenderState extends State<HomeCalender> {
       endDateSelected: selectable ? null : endDate,
       initialFocusDate: startDate ?? DateTime(2025, 5, 1),
       onRangeSelected: (start, end) {
-        if (selectable && start != null) {
-          final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
+        if (selectable) {
+          final calculatedEndDate =
+              start.add(Duration(days: cycleDuration - 1));
           setState(() {
             startDate = start;
             endDate = calculatedEndDate;
@@ -259,13 +262,16 @@ class _HomeCalenderState extends State<HomeCalender> {
     DateTime normalizedEnd = DateTime(end.year, end.month, end.day);
     return normalizedDate.isAtSameMomentAs(normalizedStart) ||
         normalizedDate.isAtSameMomentAs(normalizedEnd) ||
-        (normalizedDate.isAfter(normalizedStart) && normalizedDate.isBefore(normalizedEnd));
+        (normalizedDate.isAfter(normalizedStart) &&
+            normalizedDate.isBefore(normalizedEnd));
   }
 
   Widget _buildDayWidget(BuildContext context, DayValues dayValues) {
     final date = dayValues.day;
     final today = DateTime.now();
-    final isToday = date.year == today.year && date.month == today.month && date.day == today.day;
+    final isToday = date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day;
 
     bool isSelected = false;
     bool isInRange = false;
@@ -292,7 +298,8 @@ class _HomeCalenderState extends State<HomeCalender> {
     for (var ovulation in ovulationHistory) {
       final start = DateTime.parse(ovulation['ovulationCycle_start']).toLocal();
       final end = DateTime.parse(ovulation['ovulationCycle_end']).toLocal();
-      final peak = DateTime.parse(ovulation['ovulationCycle_peakDate']).toLocal();
+      final peak =
+          DateTime.parse(ovulation['ovulationCycle_peakDate']).toLocal();
       if (_isDateInRange(date, start, end)) {
         isOvulationWindow = true;
         if (date.isAtSameMomentAs(peak)) {
@@ -309,7 +316,8 @@ class _HomeCalenderState extends State<HomeCalender> {
     if (isPredictedCycle) print('Predicted Cycle Date: $date');
 
     bool isPredictedOvulation = _isDateInRange(date, ovStart, ovEnd);
-    bool isPredictedOvulationPeak = ovPeak != null && date.isAtSameMomentAs(ovPeak!);
+    bool isPredictedOvulationPeak =
+        ovPeak != null && date.isAtSameMomentAs(ovPeak!);
     if (isPredictedOvulation) {
       if (isPredictedOvulationPeak) {
         print('Predicted Ovulation Peak Date: $date');
@@ -324,17 +332,22 @@ class _HomeCalenderState extends State<HomeCalender> {
     if (isSelected || isInRange) {
       backgroundColor = Colors.red; // Solid red for current selection
     } else if (isPredictedOvulationPeak) {
-      backgroundColor = Colors.green; // Solid green for predicted ovulation peak
+      backgroundColor =
+          Colors.green; // Solid green for predicted ovulation peak
     } else if (isPredictedOvulation) {
-      backgroundColor = Colors.green.withOpacity(0.3); // Light green for predicted ovulation
+      backgroundColor =
+          Colors.green.withOpacity(0.3); // Light green for predicted ovulation
     } else if (isPredictedCycle) {
-      backgroundColor = Colors.orange.withOpacity(0.5); // Orange for predicted period
+      backgroundColor =
+          Colors.orange.withOpacity(0.5); // Orange for predicted period
     } else if (isHistoricalCycle) {
-      backgroundColor = Colors.redAccent.withOpacity(0.7); // Bright red for historical periods
+      backgroundColor = Colors.redAccent
+          .withOpacity(0.7); // Bright red for historical periods
     } else if (isOvulationPeak) {
       backgroundColor = Colors.purple; // Solid purple for ovulation peak
     } else if (isOvulationWindow) {
-      backgroundColor = Colors.purple.withOpacity(0.3); // Light purple for ovulation window
+      backgroundColor =
+          Colors.purple.withOpacity(0.3); // Light purple for ovulation window
     }
 
     decoration = BoxDecoration(
@@ -345,7 +358,12 @@ class _HomeCalenderState extends State<HomeCalender> {
 
     final dayStyle = TextStyle(
       fontSize: 12,
-      color: (isSelected || isInRange || isOvulationPeak || isPredictedOvulationPeak) ? Colors.white : Colors.black,
+      color: (isSelected ||
+              isInRange ||
+              isOvulationPeak ||
+              isPredictedOvulationPeak)
+          ? Colors.white
+          : Colors.black,
     );
 
     return Container(
@@ -381,11 +399,12 @@ class _HomeCalenderState extends State<HomeCalender> {
         children: [
           _legendItem(Colors.red, 'Current Selection'),
           _legendItem(Colors.redAccent.withOpacity(0.7), 'Historical Period'),
-          _legendItem(Colors.purple, 'Ovulation Peak'),
+          _legendItem(Colors.purple, 'Ovulation'),
           _legendItem(Colors.purple.withOpacity(0.3), 'Ovulation Window'),
           _legendItem(Colors.orange.withOpacity(0.5), 'Predicted Period'),
-          _legendItem(Colors.green, 'Predicted Ovulation Peak'),
-          _legendItem(Colors.green.withOpacity(0.3), 'Predicted Ovulation'),
+          _legendItem(Colors.green, 'Predicted Ovulation Day'),
+          _legendItem(
+              Colors.green.withOpacity(0.3), 'Predicted Ovulation Window'),
           _legendItem(null, 'Today (Black Border)'),
         ],
       ),
@@ -403,7 +422,9 @@ class _HomeCalenderState extends State<HomeCalender> {
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(4),
-              border: color == null ? Border.all(color: Colors.black, width: 2) : null,
+              border: color == null
+                  ? Border.all(color: Colors.black, width: 2)
+                  : null,
             ),
           ),
           const SizedBox(width: 10),
@@ -415,124 +436,99 @@ class _HomeCalenderState extends State<HomeCalender> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 300,
-          margin: const EdgeInsets.symmetric( horizontal: 12),
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white.withOpacity(0.85),
-          ),
-          child: ScrollableCleanCalendar(
-            daySelectedBackgroundColor: Colors.red,
-            dayTextStyle: const TextStyle(fontSize: 12),
-            weekdayTextStyle: const TextStyle(fontSize: 13),
-            monthTextStyle: const TextStyle(fontSize: 20),
-            calendarController: calendarController,
-            layout: Layout.BEAUTY,
-            calendarCrossAxisSpacing: 0,
-            dayBuilder: _buildDayWidget,
-          ),
-        ),
-        if (startDate != null && endDate != null && !selectable)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.calendar_today, color: Colors.red, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  'Last Period: ${DateFormat('MMM dd').format(startDate!)} - ${DateFormat('MMM dd').format(endDate!)}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF333333),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          if (startDate != null && endDate != null && !selectable)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-              ],
-            ),
-          ),
-        _buildLegend(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (selectable && startDate != null && endDate != null)
-              GestureDetector(
-                onTap: _editEndDate,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    "Edit End Date",
-                    style: TextStyle(
-                      color: Colors.white,
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.calendar_today, color: Colors.red, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Last Period: ${DateFormat('MMM dd').format(startDate!)} - ${DateFormat('MMM dd').format(endDate!)}',
+                    style: const TextStyle(
                       fontWeight: FontWeight.w500,
+                      color: Color(0xFF333333),
                     ),
                   ),
-                ),
-              ),
-            GestureDetector(
-              onTap: _toggleSelection,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
-                margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(2, 4),
-                    ),
-                  ],
-                  color: selectable ? Colors.red : Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: selectable ? Icon(Icons.save, color: Colors.white) :
-                Text("Mark Period",
-                  style: TextStyle(
-                    color: selectable ? Colors.white : Colors.red,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                ],
               ),
             ),
-            if (selectable)
+          Container(
+            height: 595,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            // padding: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white.withOpacity(0.85),
+            ),
+            child: ScrollableCleanCalendar(
+              daySelectedBackgroundColor: Colors.red,
+              dayTextStyle: const TextStyle(fontSize: 12),
+              weekdayTextStyle: const TextStyle(fontSize: 13),
+              monthTextStyle: const TextStyle(fontSize: 20),
+              calendarController: calendarController,
+              layout: Layout.BEAUTY,
+              calendarCrossAxisSpacing: 0,
+              dayBuilder: _buildDayWidget,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (selectable && startDate != null && endDate != null)
+                GestureDetector(
+                  onTap: _editEndDate,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      "Edit End Date",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
               GestureDetector(
-                onTap: _cancelSelection,
+                onTap: _toggleSelection,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
                   decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
@@ -541,13 +537,48 @@ class _HomeCalenderState extends State<HomeCalender> {
                         offset: const Offset(2, 4),
                       ),
                     ],
+                    color: selectable ? Colors.red : Colors.white,
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Icon(Icons.close, color: Colors.white),
+                  child: selectable
+                      ? Icon(Icons.save, color: Colors.white)
+                      : Text(
+                          "Mark Period",
+                          style: TextStyle(
+                            color: selectable ? Colors.white : Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
               ),
-          ],
-        ),
-      ],
+              if (selectable)
+                GestureDetector(
+                  onTap: _cancelSelection,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.close, color: Colors.white),
+                  ),
+                ),
+            ],
+          ),
+          _buildLegend(),
+        ],
+      ),
     );
   }
 }

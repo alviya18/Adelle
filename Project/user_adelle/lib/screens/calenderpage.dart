@@ -63,8 +63,10 @@ class _CalendarPageState extends State<CalendarPage> {
       }
 
       DateTime predictedNextStart = lastStart.add(Duration(days: cycleLength));
-      DateTime predictedNextEnd = predictedNextStart.add(Duration(days: cycleDuration - 1));
-      DateTime predictedOvPeak = predictedNextStart.subtract(Duration(days: 14));
+      DateTime predictedNextEnd =
+          predictedNextStart.add(Duration(days: cycleDuration - 1));
+      DateTime predictedOvPeak =
+          predictedNextStart.subtract(Duration(days: 14));
       DateTime predictedOvStart = predictedOvPeak.subtract(Duration(days: 5));
       DateTime predictedOvEnd = predictedOvPeak.add(Duration(days: 1));
 
@@ -188,7 +190,9 @@ class _CalendarPageState extends State<CalendarPage> {
     for (var cycle in cycleHistory) {
       DateTime start = DateTime.parse(cycle['cycleDate_start']).toLocal();
       DateTime end = DateTime.parse(cycle['cycleDate_end']).toLocal();
-      for (DateTime d = start; d.isBefore(end.add(Duration(days: 1))); d = d.add(Duration(days: 1))) {
+      for (DateTime d = start;
+          d.isBefore(end.add(Duration(days: 1)));
+          d = d.add(Duration(days: 1))) {
         DateTime normalizedD = DateTime(d.year, d.month, d.day);
         if (isSameDay(normalizedD, normalizedDay)) {
           events.add('Menstrual Cycle');
@@ -198,20 +202,28 @@ class _CalendarPageState extends State<CalendarPage> {
 
     // Add ovulation history
     for (var ovulation in ovulationHistory) {
-      DateTime start = DateTime.parse(ovulation['ovulationCycle_start']).toLocal();
+      DateTime start =
+          DateTime.parse(ovulation['ovulationCycle_start']).toLocal();
       DateTime end = DateTime.parse(ovulation['ovulationCycle_end']).toLocal();
-      DateTime peak = DateTime.parse(ovulation['ovulationCycle_peakDate']).toLocal();
-      for (DateTime d = start; d.isBefore(end.add(Duration(days: 1))); d = d.add(Duration(days: 1))) {
+      DateTime peak =
+          DateTime.parse(ovulation['ovulationCycle_peakDate']).toLocal();
+      for (DateTime d = start;
+          d.isBefore(end.add(Duration(days: 1)));
+          d = d.add(Duration(days: 1))) {
         DateTime normalizedD = DateTime(d.year, d.month, d.day);
         if (isSameDay(normalizedD, normalizedDay)) {
-          events.add(isSameDay(normalizedD, peak) ? 'Ovulation Peak' : 'Ovulation Window');
+          events.add(isSameDay(normalizedD, peak)
+              ? 'Ovulation Peak'
+              : 'Ovulation Window');
         }
       }
     }
 
     // Add predicted upcoming cycle
     if (nextCycleStart != null && nextCycleEnd != null) {
-      for (DateTime d = nextCycleStart!; d.isBefore(nextCycleEnd!.add(Duration(days: 1))); d = d.add(Duration(days: 1))) {
+      for (DateTime d = nextCycleStart!;
+          d.isBefore(nextCycleEnd!.add(Duration(days: 1)));
+          d = d.add(Duration(days: 1))) {
         DateTime normalizedD = DateTime(d.year, d.month, d.day);
         if (isSameDay(normalizedD, normalizedDay)) {
           events.add('Predicted Cycle');
@@ -221,10 +233,14 @@ class _CalendarPageState extends State<CalendarPage> {
 
     // Add predicted ovulation window
     if (ovStart != null && ovEnd != null && ovPeak != null) {
-      for (DateTime d = ovStart!; d.isBefore(ovEnd!.add(Duration(days: 1))); d = d.add(Duration(days: 1))) {
+      for (DateTime d = ovStart!;
+          d.isBefore(ovEnd!.add(Duration(days: 1)));
+          d = d.add(Duration(days: 1))) {
         DateTime normalizedD = DateTime(d.year, d.month, d.day);
         if (isSameDay(normalizedD, normalizedDay)) {
-          events.add(isSameDay(normalizedD, ovPeak!) ? 'Predicted Ovulation Peak' : 'Predicted Ovulation');
+          events.add(isSameDay(normalizedD, ovPeak!)
+              ? 'Predicted Ovulation Peak'
+              : 'Predicted Ovulation');
         }
       }
     }
@@ -239,82 +255,85 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Cycle Calendar')),
-      body: Column(
-        children: [
-          TableCalendar(
-            firstDay: DateTime(2020),
-            lastDay: DateTime(2030),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            eventLoader: _getEventsForDay, // Simplified to return List<String> directly
-            calendarBuilders: CalendarBuilders(
-              markerBuilder: (context, day, events) {
-                if (events.isNotEmpty) {
-                  return Positioned(
-                    bottom: 1,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: events.map((event) {
-                        Color color;
-                        switch (event) {
-                          case 'Menstrual Cycle':
-                            color = Colors.red;
-                            break;
-                          case 'Ovulation Window':
-                            color = Colors.blue.withOpacity(0.5);
-                            break;
-                          case 'Ovulation Peak':
-                            color = Colors.blue;
-                            break;
-                          case 'Predicted Cycle':
-                            color = Colors.red.withOpacity(0.5);
-                            break;
-                          case 'Predicted Ovulation':
-                            color = Colors.blue.withOpacity(0.3);
-                            break;
-                          case 'Predicted Ovulation Peak':
-                            color = Colors.blue.withOpacity(0.7);
-                            break;
-                          default:
-                            color = Colors.grey;
-                        }
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: color,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  );
-                }
-                return null;
+      body: Container(
+        child: Column(
+          children: [
+            TableCalendar(
+              firstDay: DateTime(2020),
+              lastDay: DateTime(2030),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
               },
+              eventLoader:
+                  _getEventsForDay, // Simplified to return List<String> directly
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  if (events.isNotEmpty) {
+                    return Positioned(
+                      bottom: 1,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: events.map((event) {
+                          Color color;
+                          switch (event) {
+                            case 'Menstrual Cycle':
+                              color = Colors.red;
+                              break;
+                            case 'Ovulation Window':
+                              color = Colors.blue.withOpacity(0.5);
+                              break;
+                            case 'Ovulation Peak':
+                              color = Colors.blue;
+                              break;
+                            case 'Predicted Cycle':
+                              color = Colors.red.withOpacity(0.5);
+                              break;
+                            case 'Predicted Ovulation':
+                              color = Colors.blue.withOpacity(0.3);
+                              break;
+                            case 'Predicted Ovulation Peak':
+                              color = Colors.blue.withOpacity(0.7);
+                              break;
+                            default:
+                              color = Colors.grey;
+                          }
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: pickDate,
-            child: const Text('Log New Period Start Date'),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView(
-              children: (_getEventsForDay(_selectedDay ?? _focusedDay))
-                  .map((event) => ListTile(title: Text(event)))
-                  .toList(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: pickDate,
+              child: const Text('Log New Period Start Date'),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView(
+                children: (_getEventsForDay(_selectedDay ?? _focusedDay))
+                    .map((event) => ListTile(title: Text(event)))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

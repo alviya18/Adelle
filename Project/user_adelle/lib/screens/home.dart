@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:user_adelle/components/home_calender.dart';
-import 'package:user_adelle/periods.dart';
-import 'package:user_adelle/screens/calenderpage.dart';
 import 'package:user_adelle/screens/chatbot.dart';
 import 'package:user_adelle/screens/mood.dart';
 import 'package:user_adelle/screens/profile.dart';
@@ -127,8 +125,18 @@ class _HomePageContentState extends State<HomePageContent> {
             ),
           ),
         ),
-        SizedBox(height: 5),
-        HomeCalender()
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 5,
+                ),
+                HomeCalender()
+              ],
+            ),
+          ),
+        )
         // ElevatedButton(
         //   onPressed: () {
         //     Navigator.push(

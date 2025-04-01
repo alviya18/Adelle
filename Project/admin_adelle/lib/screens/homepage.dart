@@ -98,7 +98,7 @@ class _HomepageState extends State<Homepage> {
               ],
             ),
             child: IconButton(
-              icon: Icon(Icons.logout,
+              icon: Icon(Icons.output_sharp,
                   color: Colors.white), // Change icon as needed
               onPressed: () {
                 logout();
