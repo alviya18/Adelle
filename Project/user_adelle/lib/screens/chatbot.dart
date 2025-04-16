@@ -12,11 +12,18 @@ class Chatbot extends StatefulWidget {
 class _ChatbotState extends State<Chatbot> {
   List<Map<String, String>> queryList = [];
   List<Map<String, String>> answerMessages = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     fetchFaqData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> fetchFaqData() async {
@@ -35,13 +42,42 @@ class _ChatbotState extends State<Chatbot> {
   }
 
   void sendMessage(String question) {
+    // Check if the question already exists in the answerMessages list
+    final existingIndex = answerMessages.indexWhere(
+      (message) => message["sender"] == "user" && message["text"] == question,
+    );
+
+    if (existingIndex != -1) {
+      // If the question exists, scroll to its position
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.minScrollExtent +
+              existingIndex * 60.0, // Approximate height of each message
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+      return;
+    }
+
+    // If the question doesn't exist, add it and its answer
     final answer = queryList.firstWhere(
-        (query) => query["question"] == question,
-        orElse: () =>
-            {"answer": "Sorry, I don't have an answer for that."})["answer"];
+      (query) => query["question"] == question,
+      orElse: () => {"answer": "Sorry, I don't have an answer for that."},
+    )["answer"];
+
     setState(() {
       answerMessages.add({"sender": "user", "text": question});
       answerMessages.add({"sender": "bot", "text": answer!});
+    });
+
+    // Scroll to the bottom after adding a new message
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -78,8 +114,6 @@ class _ChatbotState extends State<Chatbot> {
                         "ChatBot",
                         style: GoogleFonts.sortsMillGoudy().copyWith(
                           fontSize: 22,
-                          // color: Color(0xFFDC010E),
-                          // fontWeight: FontWeight.bold
                         ),
                       ),
                     ),
@@ -92,6 +126,7 @@ class _ChatbotState extends State<Chatbot> {
           // Chat Messages Section
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16.0),
               itemCount: answerMessages.length,
               itemBuilder: (context, index) {
@@ -129,29 +164,32 @@ class _ChatbotState extends State<Chatbot> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const Text(
-                //   "You may ask:",
-                //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                // ),
                 SizedBox(height: 5),
-                Wrap(
-                  spacing: 8.0,
-                  children: queryList.map((query) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          side: BorderSide(color: Color(0xFFDC010E)),
-                          surfaceTintColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          overlayColor: Color(0xFFDC010E),
-                          shadowColor: Colors.white),
-                      onPressed: () => sendMessage(query["question"]!),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(query["question"]!),
-                      ),
-                    );
-                  }).toList(),
+                SizedBox(
+                  height: 200,
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 5,
+                      children: queryList.map((query) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(12),
+                              side: BorderSide(color: Color(0xFFDC010E)),
+                              surfaceTintColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              overlayColor: Color(0xFFDC010E),
+                              shadowColor: Colors.white),
+                          onPressed: () => sendMessage(query["question"]!),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(query["question"]!),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ],
             ),

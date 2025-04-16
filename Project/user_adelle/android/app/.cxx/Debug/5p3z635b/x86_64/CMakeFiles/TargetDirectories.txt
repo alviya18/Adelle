@@ -1,0 +1,2 @@
+E:/Adelle/Project/user_adelle/android/app/.cxx/Debug/5p3z635b/x86_64/CMakeFiles/edit_cache.dir
+E:/Adelle/Project/user_adelle/android/app/.cxx/Debug/5p3z635b/x86_64/CMakeFiles/rebuild_cache.dir
