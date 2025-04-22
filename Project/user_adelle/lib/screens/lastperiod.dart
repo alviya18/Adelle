@@ -41,6 +41,7 @@ class _LastperiodState extends State<Lastperiod> {
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // HEADER IMAGE
             Container(
@@ -132,7 +133,7 @@ class _LastperiodState extends State<Lastperiod> {
               ),
             ),
 
-            SizedBox(height: 30),
+            SizedBox(height: 70),
 
             // FINISH BUTTON
             Padding(
@@ -159,7 +160,7 @@ class _LastperiodState extends State<Lastperiod> {
               ),
             ),
 
-            SizedBox(height: 20),
+            
           ],
         ),
       ),

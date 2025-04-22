@@ -5,6 +5,7 @@ import 'package:scrollable_clean_calendar/models/day_values_model.dart';
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
 import 'package:user_adelle/main.dart';
+import 'package:user_adelle/services/notification_services.dart';
 
 class HomeCalender extends StatefulWidget {
   const HomeCalender({super.key});
@@ -107,54 +108,82 @@ class _HomeCalenderState extends State<HomeCalender> {
   }
 
   void _initializeCalendarController() {
-    calendarController = CleanCalendarController(
-      rangeMode: true,
-      readOnly: !selectable,
-      minDate: DateTime(2024, 1, 1),
-      maxDate: DateTime(2026, 12, 31),
-      initialDateSelected: selectable ? null : startDate,
-      endDateSelected: selectable ? null : endDate,
-      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
-      onRangeSelected: (start, end) {
-        if (selectable) {
-          final calculatedEndDate =
-              start.add(Duration(days: cycleDuration - 1));
-          setState(() {
-            startDate = start;
-            endDate = calculatedEndDate; // Auto-set end date
-          });
-          _reinitializeController();
-        }
-      },
-      weekdayStart: DateTime.monday,
-    );
-    setState(() {});
+  DateTime minSelectableDate;
+  DateTime maxSelectableDate;
+
+  if (selectable) {
+    // When selectable, restrict to last period date to current date
+    minSelectableDate = cycleHistory.isNotEmpty
+        ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
+        : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
+    maxSelectableDate = DateTime.now();
+  } else {
+    // When not selectable, use full range
+    minSelectableDate = DateTime(2024, 1, 1);
+    maxSelectableDate = DateTime(2026, 12, 31);
   }
 
-  void _reinitializeController() {
-    calendarController = CleanCalendarController(
-      rangeMode: true,
-      readOnly: !selectable,
-      minDate: DateTime(2024, 1, 1),
-      maxDate: DateTime(2026, 12, 31),
-      initialDateSelected: selectable ? null : startDate,
-      endDateSelected: selectable ? null : endDate,
-      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
-      onRangeSelected: (start, end) {
-        if (selectable) {
-          final calculatedEndDate =
-              start.add(Duration(days: cycleDuration - 1));
-          setState(() {
-            startDate = start;
-            endDate = calculatedEndDate;
-          });
-          _reinitializeController();
-        }
-      },
-      weekdayStart: DateTime.monday,
-    );
-    setState(() {});
+  calendarController = CleanCalendarController(
+    rangeMode: true,
+    readOnly: !selectable,
+    minDate: minSelectableDate,
+    maxDate: maxSelectableDate,
+    initialDateSelected: selectable ? null : startDate,
+    endDateSelected: selectable ? null : endDate,
+    initialFocusDate: startDate ?? DateTime(2025, 5, 1),
+    onRangeSelected: (start, end) {
+      if (selectable) {
+        final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
+        setState(() {
+          startDate = start;
+          endDate = calculatedEndDate; // Auto-set end date
+        });
+        _reinitializeController();
+      }
+    },
+    weekdayStart: DateTime.monday,
+  );
+  setState(() {});
+}
+
+void _reinitializeController() {
+  DateTime minSelectableDate;
+  DateTime maxSelectableDate;
+
+  if (selectable) {
+    // When selectable, restrict to last period date to current date
+    minSelectableDate = cycleHistory.isNotEmpty
+        ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
+        : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
+    maxSelectableDate = DateTime.now();
+  } else {
+    // When not selectable, use full range
+    minSelectableDate = DateTime(2024, 1, 1);
+    maxSelectableDate = DateTime(2026, 12, 31);
   }
+
+  calendarController = CleanCalendarController(
+    rangeMode: true,
+    readOnly: !selectable,
+    minDate: minSelectableDate,
+    maxDate: maxSelectableDate,
+    initialDateSelected: selectable ? null : startDate,
+    endDateSelected: selectable ? null : endDate,
+    initialFocusDate: startDate ?? DateTime(2025, 5, 1),
+    onRangeSelected: (start, end) {
+      if (selectable) {
+        final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
+        setState(() {
+          startDate = start;
+          endDate = calculatedEndDate;
+        });
+        _reinitializeController();
+      }
+    },
+    weekdayStart: DateTime.monday,
+  );
+  setState(() {});
+}
 
   Future<void> _editEndDate() async {
     if (startDate == null) return;
@@ -189,17 +218,28 @@ class _HomeCalenderState extends State<HomeCalender> {
   Future<void> _savePeriodToDB() async {
     if (startDate != null && endDate != null) {
       try {
-        await supabase.from('tbl_user').update({
-          'user_lastPeriod': DateFormat('yyyy-MM-dd').format(startDate!),
-        }).eq('user_id', supabase.auth.currentUser!.id);
-
+        final userId = supabase.auth.currentUser!.id;
         final month = startDate!.month;
+
+        // First, delete existing records for this month
+        await supabase
+            .from('tbl_cycleDates')
+            .delete()
+            .eq('user_id', userId)
+            .eq('cycleDate_month', month);
+
+        // Insert new cycle dates
         await supabase.from('tbl_cycleDates').insert({
           'cycleDate_start': DateFormat('yyyy-MM-dd').format(startDate!),
           'cycleDate_end': DateFormat('yyyy-MM-dd').format(endDate!),
-          'user_id': supabase.auth.currentUser!.id,
+          'user_id': userId,
           'cycleDate_month': month,
         });
+
+        // Update the last period in user table
+        await supabase.from('tbl_user').update({
+          'user_lastPeriod': DateFormat('yyyy-MM-dd').format(startDate!),
+        }).eq('user_id', userId);
 
         cycleDuration = endDate!.difference(startDate!).inDays + 1;
 
@@ -209,37 +249,69 @@ class _HomeCalenderState extends State<HomeCalender> {
         ovStart = ovPeak!.subtract(Duration(days: 5));
         ovEnd = ovPeak!.add(Duration(days: 1));
 
+        // Cancel existing reminders before scheduling new ones
+        await RoutineNotificationService.cancelPeriodReminders();
+
+        // Schedule notification for the next period
+        if (nextCycleStart != null) {
+          await RoutineNotificationService.schedulePeriodReminder(nextCycleStart!);
+        }
+
+        // Delete existing ovulation records for next month
+        await supabase
+            .from('tbl_ovulationCycle')
+            .delete()
+            .eq('user_id', userId)
+            .eq('ovulationCycle_month', nextCycleStart!.month);
+
+        // Insert new ovulation cycle
         await supabase.from('tbl_ovulationCycle').insert({
           'ovulationCycle_start': DateFormat('yyyy-MM-dd').format(ovStart!),
           'ovulationCycle_end': DateFormat('yyyy-MM-dd').format(ovEnd!),
           'ovulationCycle_peakDate': DateFormat('yyyy-MM-dd').format(ovPeak!),
           'ovulationCycle_month': nextCycleStart!.month,
-          'user_id': supabase.auth.currentUser!.id,
+          'user_id': userId,
         });
 
+        // Update local state
         setState(() {
-          cycleHistory.insert(0, {
+          final newCycleEntry = {
             'cycleDate_start': DateFormat('yyyy-MM-dd').format(startDate!),
             'cycleDate_end': DateFormat('yyyy-MM-dd').format(endDate!),
-            'user_id': supabase.auth.currentUser!.id,
+            'user_id': userId,
             'cycleDate_month': month,
-          });
-          ovulationHistory.insert(0, {
+          };
+
+          final newOvulationEntry = {
             'ovulationCycle_start': DateFormat('yyyy-MM-dd').format(ovStart!),
             'ovulationCycle_end': DateFormat('yyyy-MM-dd').format(ovEnd!),
             'ovulationCycle_peakDate': DateFormat('yyyy-MM-dd').format(ovPeak!),
             'ovulationCycle_month': nextCycleStart!.month,
-            'user_id': supabase.auth.currentUser!.id,
-          });
+            'user_id': userId,
+          };
+
+          // Update cycleHistory
+          if (cycleHistory.isNotEmpty) {
+            cycleHistory[0] = newCycleEntry;
+          } else {
+            cycleHistory.insert(0, newCycleEntry);
+          }
+
+          // Update ovulationHistory
+          if (ovulationHistory.isNotEmpty) {
+            ovulationHistory[0] = newOvulationEntry;
+          } else {
+            ovulationHistory.insert(0, newOvulationEntry);
+          }
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Period and ovulation saved successfully')),
+          SnackBar(content: Text('Period and ovulation updated successfully')),
         );
       } catch (e) {
         print("Error saving period: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving period dates')),
+          SnackBar(content: Text('Error updating period dates')),
         );
       }
     }
