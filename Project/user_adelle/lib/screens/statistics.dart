@@ -17,8 +17,8 @@ class CycleStatistics extends StatefulWidget {
 }
 
 class _CycleStatisticsState extends State<CycleStatistics> {
-  DateTime? firstPeriodDate;  // Add this property to store first period date
-  DateTime? nextCycleStart;  // Add this property
+  DateTime? firstPeriodDate; // Add this property to store first period date
+  DateTime? nextCycleStart; // Add this property
 
   List<Map<String, dynamic>> userEmotion = [];
   List<Map<String, dynamic>> symptomStats = [];
@@ -80,7 +80,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             .eq('emotion_id', data['emotion_id']);
 
         final uemotion = uemotionResult.length;
-        double percentage = totalEmotions > 0 ? (uemotion / totalEmotions) * 100 : 0;
+        double percentage =
+            totalEmotions > 0 ? (uemotion / totalEmotions) * 100 : 0;
 
         emotionStats.add({
           'emotion': data['emotion_choice'],
@@ -136,10 +137,14 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             .from('tbl_userSymptoms')
             .select()
             .eq('user_id', supabase.auth.currentUser!.id)
-            .eq('symptoms_id', data['symptom_id']); // Fixed: Changed 'symptoms_id' to 'symptom_id'
+            .eq(
+                'symptoms_id',
+                data[
+                    'symptom_id']); // Fixed: Changed 'symptoms_id' to 'symptom_id'
 
         final symptomCount = userSymptomResult.length;
-        double percentage = totalSymptoms > 0 ? (symptomCount / totalSymptoms) * 100 : 0;
+        double percentage =
+            totalSymptoms > 0 ? (symptomCount / totalSymptoms) * 100 : 0;
 
         tempSymptomStats.add({
           'symptom': data['symptom_choice'],
@@ -175,8 +180,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
           .from('tbl_ovulationCycle')
           .select()
           .eq('user_id', supabase.auth.currentUser!.id);
-          // .gte('ovulationCycle_start', fromDate!.toIso8601String().substring(0, 10))
-          // .lte('ovulationCycle_end', toDate!.toIso8601String().substring(0, 10));
+      // .gte('ovulationCycle_start', fromDate!.toIso8601String().substring(0, 10))
+      // .lte('ovulationCycle_end', toDate!.toIso8601String().substring(0, 10));
       return result;
     } catch (e) {
       print("Error fetching ovulation cycle data: $e");
@@ -211,7 +216,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
   }
 
   Future<List<Map<String, dynamic>>> fetchEmotionReportData() async {
-    if (!emotionsTrackedChecked || fromDate == null || toDate == null) return [];
+    if (!emotionsTrackedChecked || fromDate == null || toDate == null)
+      return [];
     try {
       final totalEmotionsResult = await supabase
           .from('tbl_userEmotions')
@@ -236,7 +242,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             .lte('createdAt', toDate!.toIso8601String());
 
         final uemotion = uemotionResult.length;
-        double percentage = totalEmotions > 0 ? (uemotion / totalEmotions) * 100 : 0;
+        double percentage =
+            totalEmotions > 0 ? (uemotion / totalEmotions) * 100 : 0;
 
         if (uemotion > 0) {
           emotionStats.add({
@@ -259,7 +266,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
   }
 
   Future<List<Map<String, dynamic>>> fetchSymptomReportData() async {
-    if (!symptomsTrackedChecked || fromDate == null || toDate == null) return [];
+    if (!symptomsTrackedChecked || fromDate == null || toDate == null)
+      return [];
     try {
       final userSymptomsResult = await supabase
           .from('tbl_userSymptoms')
@@ -284,7 +292,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             .lte('createdAt', toDate!.toIso8601String());
 
         final symptomCount = userSymptomResult.length;
-        double percentage = totalSymptoms > 0 ? (symptomCount / totalSymptoms) * 100 : 0;
+        double percentage =
+            totalSymptoms > 0 ? (symptomCount / totalSymptoms) * 100 : 0;
 
         if (symptomCount > 0) {
           symptomStats.add({
@@ -326,16 +335,16 @@ class _CycleStatisticsState extends State<CycleStatistics> {
           pw.Header(
             level: 0,
             child: pw.Text(
-              'Cycle Health Report',
+              ' Health Report',
               style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
             ),
           ),
           pw.SizedBox(height: 10),
           pw.Text(
-            'Date Range: ${fromDate != null ? dateFormat.format(fromDate!) : 'N/A'} - ${toDate != null ? dateFormat.format(toDate!) : 'N/A'}',
-            style: const pw.TextStyle(fontSize: 16),
+            'Date Range : ${fromDate != null ? dateFormat.format(fromDate!) : 'N/A'} - ${toDate != null ? dateFormat.format(toDate!) : 'N/A'}\n\nGenerated on ${dateFormat.format(DateTime.now())} by Adelle',
+            style: const pw.TextStyle(fontSize: 13),
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 15),
 
           // Period Cycles Section
           if (periodData.isNotEmpty) ...[
@@ -362,15 +371,15 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             pw.Header(level: 1, text: 'Ovulation Cycles'),
             pw.Table.fromTextArray(
               context: context,
-              headers: ['Start Date', 'End Date', 'Duration (Days)'],
+              headers: ['Start Date', 'End Date', 'Peak Days'],
               data: ovulationData.map((cycle) {
                 final start = DateTime.parse(cycle['ovulationCycle_start']);
                 final end = DateTime.parse(cycle['ovulationCycle_end']);
-                final duration = end.difference(start).inDays + 1;
+                final peak = DateTime.parse(cycle['ovulationCycle_peakDate']);
                 return [
                   dateFormat.format(start),
                   dateFormat.format(end),
-                  duration.toString(),
+                  dateFormat.format(peak),
                 ];
               }).toList(),
             ),
@@ -379,15 +388,17 @@ class _CycleStatisticsState extends State<CycleStatistics> {
 
           // Emotions Section
           if (emotionData.isNotEmpty) ...[
-            pw.Header(level: 1, text: 'Emotions Tracked'),
+            pw.Header(level: 1, text: 'Moods Tracked'),
             pw.Table.fromTextArray(
               context: context,
-              headers: ['Emotion', 'Count', 'Percentage'],
-              data: emotionData.map((emotion) => [
-                emotion['emotion'],
-                emotion['count'].toString(),
-                '${emotion['percentage'].toStringAsFixed(1)}%',
-              ]).toList(),
+              headers: ['Mood', 'Tracked Times', 'Percentage'],
+              data: emotionData
+                  .map((emotion) => [
+                        emotion['emotion'],
+                        emotion['count'].toString(),
+                        '${emotion['percentage'].toStringAsFixed(1)}%',
+                      ])
+                  .toList(),
             ),
             pw.SizedBox(height: 20),
           ],
@@ -397,19 +408,23 @@ class _CycleStatisticsState extends State<CycleStatistics> {
             pw.Header(level: 1, text: 'Symptoms Tracked'),
             pw.Table.fromTextArray(
               context: context,
-              headers: ['Symptom', 'Count', 'Percentage'],
-              data: symptomData.map((symptom) => [
-                symptom['symptom'],
-                symptom['count'].toString(),
-                '${symptom['percentage'].toStringAsFixed(1)}%',
-              ]).toList(),
+              headers: ['Symptom', 'Tracked Times', 'Percentage'],
+              data: symptomData
+                  .map((symptom) => [
+                        symptom['symptom'],
+                        symptom['count'].toString(),
+                        '${symptom['percentage'].toStringAsFixed(1)}%',
+                      ])
+                  .toList(),
             ),
             pw.SizedBox(height: 20),
           ],
 
           // No Data Message
-          if (ovulationData.isEmpty && periodData.isEmpty && 
-              emotionData.isEmpty && symptomData.isEmpty)
+          if (ovulationData.isEmpty &&
+              periodData.isEmpty &&
+              emotionData.isEmpty &&
+              symptomData.isEmpty)
             pw.Text(
               'No data available for the selected options and date range.',
               style: pw.TextStyle(
@@ -423,11 +438,11 @@ class _CycleStatisticsState extends State<CycleStatistics> {
 
     // Save PDF
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/cycle_health_report.pdf');
+    final file = File('${dir.path}/adelle_health_report.pdf');
     await file.writeAsBytes(await pdf.save());
 
     // Share PDF
-    await Share.shareXFiles([XFile(file.path)], text: 'Cycle Health Report');
+    await Share.shareXFiles([XFile(file.path)], text: 'Health Report');
   }
 
   @override
@@ -435,8 +450,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
     super.initState();
     fetchEmotionData();
     fetchSymptomData();
-    fetchFirstPeriodDate();  // Add this method call
-    fetchPredictedDate();  // Add this method call
+    fetchFirstPeriodDate(); // Add this method call
+    fetchPredictedDate(); // Add this method call
   }
 
   Future<void> fetchFirstPeriodDate() async {
@@ -445,10 +460,10 @@ class _CycleStatisticsState extends State<CycleStatistics> {
           .from('tbl_cycleDates')
           .select('cycleDate_start')
           .eq('user_id', supabase.auth.currentUser!.id)
-          .order('cycleDate_start', ascending: true)
+          .order('cycleDate_start', ascending: false)
           .limit(1)
           .single();
-      
+
       setState(() {
         firstPeriodDate = DateTime.parse(response['cycleDate_start']);
       });
@@ -493,57 +508,57 @@ class _CycleStatisticsState extends State<CycleStatistics> {
 
   // Colors for pie chart sections (direct light and bright red shades, no const)
   final List<Color> pieColors = [
-    Color.fromARGB(255, 255, 0, 0),      // Pure Bright Red
-    Color.fromARGB(255, 220, 0, 0),      // Deep Bright Red
-    Color.fromARGB(255, 255, 51, 51),    // Vivid Red
-    Color.fromARGB(255, 200, 0, 0),      // Rich Red
-    Color.fromARGB(255, 255, 102, 102),  // Light Bright Red
-    Color.fromARGB(255, 180, 0, 0),      // Bold Red
-    Color.fromARGB(255, 255, 153, 153),  // Soft Light Red
-    Color.fromARGB(255, 240, 0, 0),      // Scarlet Red
-    Color.fromARGB(255, 255, 80, 80),    // Warm Bright Red
-    Color.fromARGB(255, 210, 0, 0),      // Intense Red
-    Color.fromARGB(255, 255, 128, 128),  // Pale Bright Red
-    Color.fromARGB(255, 190, 0, 0),      // Strong Red
-    Color.fromARGB(255, 255, 64, 64),    // Clear Red
-    Color.fromARGB(255, 230, 0, 0),      // Vibrant Red
+    Color.fromARGB(255, 230, 0, 0), // Deep Red
+    Color.fromARGB(255, 230, 40, 40),
+    Color.fromARGB(255, 230, 80, 80),
+    Colors.red,
+    Color.fromARGB(255, 255, 0, 0), // Bright Red
+
+    Color.fromARGB(255, 255, 80, 80),
+    Color.fromARGB(255, 255, 120, 120),
+    Color.fromARGB(255, 255, 150, 150),
+    Color.fromARGB(255, 255, 180, 180),
+    Color.fromARGB(255, 255, 200, 200),
+    Color.fromARGB(255, 255, 220, 220),
+    Color.fromARGB(255, 255, 235, 235),
+    Color.fromARGB(255, 255, 245, 245),
   ];
 
-  Widget _buildCycleStatus() {
-    if (daysLate > 0) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.red.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.warning, color: Colors.red, size: 25),
-            const SizedBox(width: 8),
-            Text(
-              'Your period is ${daysLate} ${daysLate == 1 ? 'day' : 'days'} late',
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    return const SizedBox.shrink();
-  }
+  // Widget _buildCycleStatus() {
+  //   if (daysLate > 0) {
+  //     return Container(
+  //       margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+  //       padding: const EdgeInsets.all(10),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(10),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.red.withOpacity(0.3),
+  //             spreadRadius: 1,
+  //             blurRadius: 3,
+  //             offset: const Offset(0, 2),
+  //           ),
+  //         ],
+  //       ),
+  //       // child: Row(
+  //       //   mainAxisAlignment: MainAxisAlignment.center,
+  //       //   children: [
+  //       //     const Icon(Icons.warning, color: Colors.red, size: 25),
+  //       //     const SizedBox(width: 8),
+  //       //     Text(
+  //       //       'Your period is ${daysLate} ${daysLate == 1 ? 'day' : 'days'} late',
+  //       //       style: const TextStyle(
+  //       //         color: Colors.red,
+  //       //         fontWeight: FontWeight.bold,
+  //       //       ),
+  //       //     ),
+  //       //   ],
+  //       // ),
+  //     );
+  //   }
+  //   return const SizedBox.shrink();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -556,7 +571,7 @@ class _CycleStatisticsState extends State<CycleStatistics> {
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -587,9 +602,9 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildCycleStatus(),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -606,7 +621,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.calendar_today, color: Colors.red, size: 25),
+                        const Icon(Icons.calendar_today,
+                            color: Colors.red, size: 25),
                         const SizedBox(width: 8),
                         Column(
                           children: [
@@ -617,13 +633,17 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                               ),
                             ),
                             Text(
-                              daysLate > 0 
-                                ? 'Late by ${daysLate} ${daysLate == 1 ? 'day' : 'days'}'
-                                : 'Day ${daysSinceFirstPeriod} of your cycle',
+                              daysLate > 0
+                                  ? 'Late by ${daysLate} ${daysLate == 1 ? 'day' : 'days'}'
+                                  : 'Day ${daysSinceFirstPeriod + 1} of your cycle',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: daysLate > 0 ? Colors.red : const Color(0xFF333333),
-                                fontWeight: daysLate > 0 ? FontWeight.bold : FontWeight.normal,
+                                color: daysLate > 0
+                                    ? Colors.red
+                                    : const Color(0xFF333333),
+                                fontWeight: daysLate > 0
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                             ),
                           ],
@@ -632,36 +652,22 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Moods',
-                          style: GoogleFonts.sortsMillGoudy().copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Symptoms',
-                          style: GoogleFonts.sortsMillGoudy().copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
                         child: Column(
                           children: [
+                            Text(
+                              'MOODS',
+                              style: GoogleFonts.sortsMillGoudy(
+                                fontSize: 18,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             Container(
-                              margin: const EdgeInsets.only(left: 15, right: 7.5),
+                              margin:
+                                  const EdgeInsets.only(left: 15, right: 7.5),
                               height: screenWidth * 0.5,
                               child: userEmotion.isEmpty
                                   ? const Center(child: Text('No emotion data'))
@@ -670,26 +676,30 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                         sections: userEmotion
                                             .asMap()
                                             .entries
-                                            .where((entry) => entry.value['percentage'] > 0)
+                                            .where((entry) =>
+                                                entry.value['percentage'] > 0)
                                             .map((entry) {
-                                              int index = entry.key;
-                                              Map<String, dynamic> data = entry.value;
-                                              return PieChartSectionData(
-                                                color: pieColors[index % pieColors.length],
-                                                value: data['percentage'],
-                                                title:
-                                                    '${data['emotion']}\n${data['percentage'].toStringAsFixed(1)}%',
-                                                radius: screenWidth * 0.15,
-                                                titleStyle: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                titlePositionPercentageOffset: 0.55,
-                                              );
-                                            }).toList(),
+                                          int index = entry.key;
+                                          Map<String, dynamic> data =
+                                              entry.value;
+                                          return PieChartSectionData(
+                                            color: pieColors[
+                                                index % pieColors.length],
+                                            value: data['percentage'],
+                                            title:
+                                                '${data['emotion']}\n${data['percentage'].toStringAsFixed(1)}%',
+                                            radius: screenWidth * 0.2,
+                                            titleStyle:
+                                                GoogleFonts.sortsMillGoudy(
+                                              fontSize: 10,
+                                              // fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                            titlePositionPercentageOffset: 0.55,
+                                          );
+                                        }).toList(),
                                         sectionsSpace: 2,
-                                        centerSpaceRadius: screenWidth * 0.05,
+                                        centerSpaceRadius: screenWidth * 0.025,
                                       ),
                                     ),
                             ),
@@ -726,11 +736,22 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Expanded(
                         child: Column(
                           children: [
+                            Text(
+                              'SYMPTOMS',
+                              style: GoogleFonts.sortsMillGoudy(
+                                fontSize: 18,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             Container(
-                              margin: const EdgeInsets.only(left: 7.5, right: 15),
+                              margin:
+                                  const EdgeInsets.only(left: 7.5, right: 15),
                               height: screenWidth * 0.5,
                               child: symptomStats.isEmpty
                                   ? const Center(child: Text('No symptom data'))
@@ -739,26 +760,30 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                         sections: symptomStats
                                             .asMap()
                                             .entries
-                                            .where((entry) => entry.value['percentage'] > 0)
+                                            .where((entry) =>
+                                                entry.value['percentage'] > 0)
                                             .map((entry) {
-                                              int index = entry.key;
-                                              Map<String, dynamic> data = entry.value;
-                                              return PieChartSectionData(
-                                                color: pieColors[index % pieColors.length],
-                                                value: data['percentage'],
-                                                title:
-                                                    '${data['symptom']}\n${data['percentage'].toStringAsFixed(1)}%',
-                                                radius: screenWidth * 0.15,
-                                                titleStyle: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                titlePositionPercentageOffset: 0.55,
-                                              );
-                                            }).toList(),
+                                          int index = entry.key;
+                                          Map<String, dynamic> data =
+                                              entry.value;
+                                          return PieChartSectionData(
+                                            color: pieColors[
+                                                index % pieColors.length],
+                                            value: data['percentage'],
+                                            title:
+                                                '${data['symptom']}\n${data['percentage'].toStringAsFixed(1)}%',
+                                            radius: screenWidth * 0.2,
+                                            titleStyle:
+                                                GoogleFonts.sortsMillGoudy(
+                                              fontSize: 10,
+                                              // fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                            titlePositionPercentageOffset: 0.55,
+                                          );
+                                        }).toList(),
                                         sectionsSpace: 2,
-                                        centerSpaceRadius: screenWidth * 0.05,
+                                        centerSpaceRadius: screenWidth * 0.025,
                                       ),
                                     ),
                             ),
@@ -811,13 +836,16 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             content: StatefulBuilder(
-                              builder: (BuildContext context, StateSetter setState) {
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
                                 return SingleChildScrollView(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Text('Select the date range for the report'),
+                                      const Text(
+                                          'Select the date range for the report'),
                                       const SizedBox(height: 8),
                                       Row(
                                         children: [
@@ -826,10 +854,13 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                               readOnly: true,
                                               decoration: const InputDecoration(
                                                 labelText: 'From',
-                                                labelStyle: TextStyle(color: Colors.red),
+                                                labelStyle: TextStyle(
+                                                    color: Colors.red),
                                                 border: UnderlineInputBorder(),
-                                                focusedBorder: UnderlineInputBorder(
-                                                  borderSide: BorderSide(color: Colors.red),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.red),
                                                 ),
                                               ),
                                               controller: TextEditingController(
@@ -838,22 +869,35 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                                     : "",
                                               ),
                                               onTap: () async {
-                                                final picked = await showDatePicker(
+                                                final picked =
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime.now(),
-                                                  builder: (BuildContext context, Widget? child) {
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
                                                     return Theme(
-                                                      data: Theme.of(context).copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color(0xFFDC010E),
-                                                          onPrimary: Colors.white,
-                                                          onSurface: Color(0xFF333333),
+                                                      data: Theme.of(context)
+                                                          .copyWith(
+                                                        colorScheme:
+                                                            const ColorScheme
+                                                                .light(
+                                                          primary:
+                                                              Color(0xFFDC010E),
+                                                          onPrimary:
+                                                              Colors.white,
+                                                          onSurface:
+                                                              Color(0xFF333333),
                                                         ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: const Color(0xFFDC010E),
+                                                        textButtonTheme:
+                                                            TextButtonThemeData(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                const Color(
+                                                                    0xFFDC010E),
                                                           ),
                                                         ),
                                                       ),
@@ -875,10 +919,13 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                               readOnly: true,
                                               decoration: const InputDecoration(
                                                 labelText: 'To',
-                                                labelStyle: TextStyle(color: Colors.red),
+                                                labelStyle: TextStyle(
+                                                    color: Colors.red),
                                                 border: UnderlineInputBorder(),
-                                                focusedBorder: UnderlineInputBorder(
-                                                  borderSide: BorderSide(color: Colors.red),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.red),
                                                 ),
                                               ),
                                               controller: TextEditingController(
@@ -887,22 +934,35 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                                     : "",
                                               ),
                                               onTap: () async {
-                                                final picked = await showDatePicker(
+                                                final picked =
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime.now(),
-                                                  builder: (BuildContext context, Widget? child) {
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
                                                     return Theme(
-                                                      data: Theme.of(context).copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color(0xFFDC010E),
-                                                          onPrimary: Colors.white,
-                                                          onSurface: Color(0xFF333333),
+                                                      data: Theme.of(context)
+                                                          .copyWith(
+                                                        colorScheme:
+                                                            const ColorScheme
+                                                                .light(
+                                                          primary:
+                                                              Color(0xFFDC010E),
+                                                          onPrimary:
+                                                              Colors.white,
+                                                          onSurface:
+                                                              Color(0xFF333333),
                                                         ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: const Color(0xFFDC010E),
+                                                        textButtonTheme:
+                                                            TextButtonThemeData(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                const Color(
+                                                                    0xFFDC010E),
                                                           ),
                                                         ),
                                                       ),
@@ -926,7 +986,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                           Checkbox(
                                             value: periodCycleChecked,
                                             side: const BorderSide(width: 1),
-                                            activeColor: const Color(0xFFDC010E),
+                                            activeColor:
+                                                const Color(0xFFDC010E),
                                             onChanged: (value) {
                                               setState(() {
                                                 periodCycleChecked = value!;
@@ -941,7 +1002,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                           Checkbox(
                                             side: const BorderSide(width: 1),
                                             value: ovulationCycleChecked,
-                                            activeColor: const Color(0xFFDC010E),
+                                            activeColor:
+                                                const Color(0xFFDC010E),
                                             onChanged: (value) {
                                               setState(() {
                                                 ovulationCycleChecked = value!;
@@ -956,7 +1018,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                           Checkbox(
                                             side: const BorderSide(width: 1),
                                             value: emotionsTrackedChecked,
-                                            activeColor: const Color(0xFFDC010E),
+                                            activeColor:
+                                                const Color(0xFFDC010E),
                                             onChanged: (value) {
                                               setState(() {
                                                 emotionsTrackedChecked = value!;
@@ -971,7 +1034,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                           Checkbox(
                                             side: const BorderSide(width: 1),
                                             value: symptomsTrackedChecked,
-                                            activeColor: const Color(0xFFDC010E),
+                                            activeColor:
+                                                const Color(0xFFDC010E),
                                             onChanged: (value) {
                                               setState(() {
                                                 symptomsTrackedChecked = value!;
@@ -984,9 +1048,13 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                       const SizedBox(height: 20),
                                       ElevatedButton(
                                         onPressed: () async {
-                                          if (fromDate == null || toDate == null) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(content: Text("Please select both dates")),
+                                          if (fromDate == null ||
+                                              toDate == null) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      "Please select both dates")),
                                             );
                                             return;
                                           }
@@ -994,8 +1062,11 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                               !ovulationCycleChecked &&
                                               !emotionsTrackedChecked &&
                                               !symptomsTrackedChecked) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(content: Text("Please select at least one data type")),
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      "Please select at least one data to be downloaded")),
                                             );
                                             return;
                                           }
@@ -1003,29 +1074,40 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                                             await generateAndSharePdf();
                                             if (mounted) {
                                               Navigator.of(context).pop();
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(content: Text("PDF generated and shared successfully")),
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        "PDF generated and shared successfully")),
                                               );
                                             }
                                           } catch (e) {
                                             if (mounted) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text("Failed to generate PDF: $e")),
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        "Failed to generate PDF : $e")),
                                               );
                                             }
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFFDC010E),
-                                          overlayColor: const Color.fromARGB(255, 8, 8, 8),
+                                          backgroundColor:
+                                              const Color(0xFFDC010E),
+                                          overlayColor: const Color.fromARGB(
+                                              255, 8, 8, 8),
                                           shadowColor: const Color(0xFFDC010E),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(50),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
                                           ),
                                         ),
                                         child: const Text(
                                           'Download',
-                                          style: TextStyle(color: Colors.white, fontSize: 16),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16),
                                         ),
                                       ),
                                     ],
@@ -1038,7 +1120,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                       );
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -1067,7 +1150,8 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                               ),
                               Row(
                                 children: [
-                                  const Icon(Icons.cloud_download_outlined, color: Colors.red, size: 16),
+                                  const Icon(Icons.cloud_download_outlined,
+                                      color: Colors.red, size: 16),
                                   const SizedBox(width: 8),
                                   const Text(
                                     'PDF',
