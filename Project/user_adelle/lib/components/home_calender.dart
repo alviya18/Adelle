@@ -108,82 +108,84 @@ class _HomeCalenderState extends State<HomeCalender> {
   }
 
   void _initializeCalendarController() {
-  DateTime minSelectableDate;
-  DateTime maxSelectableDate;
+    DateTime minSelectableDate;
+    DateTime maxSelectableDate;
 
-  if (selectable) {
-    // When selectable, restrict to last period date to current date
-    minSelectableDate = cycleHistory.isNotEmpty
-        ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
-        : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
-    maxSelectableDate = DateTime.now();
-  } else {
-    // When not selectable, use full range
-    minSelectableDate = DateTime(2024, 1, 1);
-    maxSelectableDate = DateTime(2026, 12, 31);
+    if (selectable) {
+      // When selectable, restrict to last period date to current date
+      minSelectableDate = cycleHistory.isNotEmpty
+          ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
+          : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
+      maxSelectableDate = DateTime.now();
+    } else {
+      // When not selectable, use full range
+      minSelectableDate = DateTime(2024, 1, 1);
+      maxSelectableDate = DateTime(2026, 12, 31);
+    }
+
+    calendarController = CleanCalendarController(
+      rangeMode: true,
+      readOnly: !selectable,
+      minDate: minSelectableDate,
+      maxDate: maxSelectableDate,
+      initialDateSelected: selectable ? null : startDate,
+      endDateSelected: selectable ? null : endDate,
+      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
+      onRangeSelected: (start, end) {
+        if (selectable) {
+          final calculatedEndDate =
+              start.add(Duration(days: cycleDuration - 1));
+          setState(() {
+            startDate = start;
+            endDate = calculatedEndDate; // Auto-set end date
+          });
+          _reinitializeController();
+        }
+      },
+      weekdayStart: DateTime.monday,
+    );
+    setState(() {});
   }
 
-  calendarController = CleanCalendarController(
-    rangeMode: true,
-    readOnly: !selectable,
-    minDate: minSelectableDate,
-    maxDate: maxSelectableDate,
-    initialDateSelected: selectable ? null : startDate,
-    endDateSelected: selectable ? null : endDate,
-    initialFocusDate: startDate ?? DateTime(2025, 5, 1),
-    onRangeSelected: (start, end) {
-      if (selectable) {
-        final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
-        setState(() {
-          startDate = start;
-          endDate = calculatedEndDate; // Auto-set end date
-        });
-        _reinitializeController();
-      }
-    },
-    weekdayStart: DateTime.monday,
-  );
-  setState(() {});
-}
+  void _reinitializeController() {
+    DateTime minSelectableDate;
+    DateTime maxSelectableDate;
 
-void _reinitializeController() {
-  DateTime minSelectableDate;
-  DateTime maxSelectableDate;
+    if (selectable) {
+      // When selectable, restrict to last period date to current date
+      minSelectableDate = cycleHistory.isNotEmpty
+          ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
+          : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
+      maxSelectableDate = DateTime.now();
+    } else {
+      // When not selectable, use full range
+      minSelectableDate = DateTime(2024, 1, 1);
+      maxSelectableDate = DateTime(2026, 12, 31);
+    }
 
-  if (selectable) {
-    // When selectable, restrict to last period date to current date
-    minSelectableDate = cycleHistory.isNotEmpty
-        ? DateTime.parse(cycleHistory[0]['cycleDate_start']).toLocal()
-        : startDate ?? DateTime.now().subtract(Duration(days: cycleLength));
-    maxSelectableDate = DateTime.now();
-  } else {
-    // When not selectable, use full range
-    minSelectableDate = DateTime(2024, 1, 1);
-    maxSelectableDate = DateTime(2026, 12, 31);
+    calendarController = CleanCalendarController(
+      rangeMode: true,
+      readOnly: !selectable,
+      minDate: minSelectableDate,
+      maxDate: maxSelectableDate,
+      initialDateSelected: selectable ? null : startDate,
+      endDateSelected: selectable ? null : endDate,
+      initialFocusDate: startDate ?? DateTime(2025, 5, 1),
+      onRangeSelected: (start, end) {
+        if (selectable) {
+          final calculatedEndDate =
+              start.add(Duration(days: cycleDuration - 1));
+          setState(() {
+            startDate = start;
+            endDate = calculatedEndDate;
+          });
+          _reinitializeController();
+        }
+      },
+      weekdayStart: DateTime.monday,
+    );
+    setState(() {});
   }
-
-  calendarController = CleanCalendarController(
-    rangeMode: true,
-    readOnly: !selectable,
-    minDate: minSelectableDate,
-    maxDate: maxSelectableDate,
-    initialDateSelected: selectable ? null : startDate,
-    endDateSelected: selectable ? null : endDate,
-    initialFocusDate: startDate ?? DateTime(2025, 5, 1),
-    onRangeSelected: (start, end) {
-      if (selectable) {
-        final calculatedEndDate = start.add(Duration(days: cycleDuration - 1));
-        setState(() {
-          startDate = start;
-          endDate = calculatedEndDate;
-        });
-        _reinitializeController();
-      }
-    },
-    weekdayStart: DateTime.monday,
-  );
-  setState(() {});
-}
 
   Future<void> _editEndDate() async {
     if (startDate == null) return;
@@ -254,7 +256,8 @@ void _reinitializeController() {
 
         // Schedule notification for the next period
         if (nextCycleStart != null) {
-          await RoutineNotificationService.schedulePeriodReminder(nextCycleStart!);
+          await RoutineNotificationService.schedulePeriodReminder(
+              nextCycleStart!);
         }
 
         // Delete existing ovulation records for next month

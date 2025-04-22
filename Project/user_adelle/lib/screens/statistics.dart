@@ -601,7 +601,9 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -652,177 +654,166 @@ class _CycleStatisticsState extends State<CycleStatistics> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              'MOODS',
-                              style: GoogleFonts.sortsMillGoudy(
-                                fontSize: 18,
-                                // fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(left: 15, right: 7.5),
-                              height: screenWidth * 0.5,
-                              child: userEmotion.isEmpty
-                                  ? const Center(child: Text('No emotion data'))
-                                  : PieChart(
-                                      PieChartData(
-                                        sections: userEmotion
-                                            .asMap()
-                                            .entries
-                                            .where((entry) =>
-                                                entry.value['percentage'] > 0)
-                                            .map((entry) {
-                                          int index = entry.key;
-                                          Map<String, dynamic> data =
-                                              entry.value;
-                                          return PieChartSectionData(
-                                            color: pieColors[
-                                                index % pieColors.length],
-                                            value: data['percentage'],
-                                            title:
-                                                '${data['emotion']}\n${data['percentage'].toStringAsFixed(1)}%',
-                                            radius: screenWidth * 0.2,
-                                            titleStyle:
-                                                GoogleFonts.sortsMillGoudy(
-                                              fontSize: 10,
-                                              // fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                            titlePositionPercentageOffset: 0.55,
-                                          );
-                                        }).toList(),
-                                        sectionsSpace: 2,
-                                        centerSpaceRadius: screenWidth * 0.025,
-                                      ),
-                                    ),
-                            ),
-                            const SizedBox(height: 10),
-                            // Emotion Legend (commented out as in original)
-                            /*
-                            Padding(
-                              padding: const EdgeInsets.only(left: 15, right: 7.5),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: userEmotion.map((data) {
-                                  int index = userEmotion.indexOf(data);
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 2),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          color: pieColors[index % pieColors.length],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '${data['emotion']}: ${data['percentage'].toStringAsFixed(1)}% (${data['count']})',
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            */
-                          ],
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          'MOODS',
+                          style: GoogleFonts.sortsMillGoudy(
+                            fontSize: 18,
+                            // fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              'SYMPTOMS',
-                              style: GoogleFonts.sortsMillGoudy(
-                                fontSize: 18,
-                                // fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(left: 7.5, right: 15),
-                              height: screenWidth * 0.5,
-                              child: symptomStats.isEmpty
-                                  ? const Center(child: Text('No symptom data'))
-                                  : PieChart(
-                                      PieChartData(
-                                        sections: symptomStats
-                                            .asMap()
-                                            .entries
-                                            .where((entry) =>
-                                                entry.value['percentage'] > 0)
-                                            .map((entry) {
-                                          int index = entry.key;
-                                          Map<String, dynamic> data =
-                                              entry.value;
-                                          return PieChartSectionData(
-                                            color: pieColors[
-                                                index % pieColors.length],
-                                            value: data['percentage'],
-                                            title:
-                                                '${data['symptom']}\n${data['percentage'].toStringAsFixed(1)}%',
-                                            radius: screenWidth * 0.2,
-                                            titleStyle:
-                                                GoogleFonts.sortsMillGoudy(
-                                              fontSize: 10,
-                                              // fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                            titlePositionPercentageOffset: 0.55,
-                                          );
-                                        }).toList(),
-                                        sectionsSpace: 2,
-                                        centerSpaceRadius: screenWidth * 0.025,
-                                      ),
-                                    ),
-                            ),
-                            const SizedBox(height: 10),
-                            // Symptom Legend (commented out as in original)
-                            /*
-                            Padding(
-                              padding: const EdgeInsets.only(left: 7.5, right: 15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: symptomStats.map((data) {
-                                  int index = symptomStats.indexOf(data);
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 2),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          color: pieColors[index % pieColors.length],
+                        Container(
+                          margin: const EdgeInsets.only(left: 15, right: 7.5),
+                          height: screenWidth * 0.5,
+                          child: userEmotion.isEmpty
+                              ? const Center(child: Text('No emotion data'))
+                              : PieChart(
+                                  PieChartData(
+                                    sections: userEmotion
+                                        .asMap()
+                                        .entries
+                                        .where((entry) =>
+                                            entry.value['percentage'] > 0)
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      Map<String, dynamic> data = entry.value;
+                                      return PieChartSectionData(
+                                        color:
+                                            pieColors[index % pieColors.length],
+                                        value: data['percentage'],
+                                        title:
+                                            '${data['emotion']}\n${data['percentage'].toStringAsFixed(1)}%',
+                                        radius: screenWidth * 0.2,
+                                        titleStyle: GoogleFonts.sortsMillGoudy(
+                                          fontSize: 10,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '${data['symptom']}: ${data['percentage'].toStringAsFixed(1)}% (${data['count']})',
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            */
-                          ],
+                                        titlePositionPercentageOffset: 0.55,
+                                      );
+                                    }).toList(),
+                                    sectionsSpace: 2,
+                                    centerSpaceRadius: screenWidth * 0.025,
+                                  ),
+                                ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        // Emotion Legend (commented out as in original)
+                        /*
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 7.5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: userEmotion.map((data) {
+                              int index = userEmotion.indexOf(data);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      color: pieColors[index % pieColors.length],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '${data['emotion']}: ${data['percentage'].toStringAsFixed(1)}% (${data['count']})',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        */
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          'SYMPTOMS',
+                          style: GoogleFonts.sortsMillGoudy(
+                            fontSize: 18,
+                            // fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 7.5, right: 15),
+                          height: screenWidth * 0.5,
+                          child: symptomStats.isEmpty
+                              ? const Center(child: Text('No symptom data'))
+                              : PieChart(
+                                  PieChartData(
+                                    sections: symptomStats
+                                        .asMap()
+                                        .entries
+                                        .where((entry) =>
+                                            entry.value['percentage'] > 0)
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      Map<String, dynamic> data = entry.value;
+                                      return PieChartSectionData(
+                                        color:
+                                            pieColors[index % pieColors.length],
+                                        value: data['percentage'],
+                                        title:
+                                            '${data['symptom']}\n${data['percentage'].toStringAsFixed(1)}%',
+                                        radius: screenWidth * 0.2,
+                                        titleStyle: GoogleFonts.sortsMillGoudy(
+                                          fontSize: 10,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        titlePositionPercentageOffset: 0.55,
+                                      );
+                                    }).toList(),
+                                    sectionsSpace: 2,
+                                    centerSpaceRadius: screenWidth * 0.025,
+                                  ),
+                                ),
+                        ),
+
+                        // Symptom Legend (commented out as in original)
+                        /*
+                        Padding(
+                          padding: const EdgeInsets.only(left: 7.5, right: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: symptomStats.map((data) {
+                              int index = symptomStats.indexOf(data);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      color: pieColors[index % pieColors.length],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '${data['symptom']}: ${data['percentage'].toStringAsFixed(1)}% (${data['count']})',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        */
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
                       showDialog(
